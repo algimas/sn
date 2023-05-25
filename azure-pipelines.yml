@@ -48,8 +48,8 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-    configFile: 'br.xml'
-    namePath: 'br4.xml'
+    configFile: 'br4.xml'
+    namePath: 'br.xml'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
