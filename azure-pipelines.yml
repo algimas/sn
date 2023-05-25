@@ -55,6 +55,10 @@ steps:
 #    echo "$SCRIPT_CONTENT" > $(lastPart).js
 #  displayName: 'Extract <script> content to $(lastPart).js'
 
+- script: |
+    cat $(changedFiles)
+  displayName: 'View content of changedFiles'
+
 
 - script: |
     pip install lxml
