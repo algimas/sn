@@ -13,10 +13,11 @@ steps:
 - checkout: self
   fetchDepth: 2
 
-- script: git diff --name-only HEAD~1 HEAD
+- script: git diff --name-only HEAD~1 HEAD >> $(FileName)
   displayName: 'Get changed files'
 
-
+- script: echo $(FileName)
+  displayName: 'Show changed files'
 
 - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
   inputs:
