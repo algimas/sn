@@ -22,8 +22,17 @@ steps:
     echo $(changedFiles)
   displayName: 'Display changed files'
 
+- script: |
+    if [[ "$(changedFiles)" == global* ]]; then
+      echo "##vso[task.setvariable variable=startsWithGlobal]true"
+    else
+      echo "##vso[task.setvariable variable=startsWithGlobal]false"
+    fi
+  displayName: 'Check if changedFiles starts with "global"'
 
 - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+#  condition: ne(variables['changedFiles'], '')
+  condition: eq(variables['startsWithGlobal'], 'true')
   inputs:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
