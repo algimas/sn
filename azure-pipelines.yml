@@ -52,6 +52,6 @@ steps:
   displayName: 'Install xmlstarlet'
 
 - script: |
-    SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(lastPart))
+    SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(changedFiles))
     echo "$SCRIPT_CONTENT" > $(lastPart).js
   displayName: 'Extract <script> content to $(lastPart).js'
