@@ -56,8 +56,10 @@ steps:
 #  displayName: 'Extract <script> content to $(lastPart).js'
 
 
+
+
 - script: |
-    SCRIPT_CONTENT=$(sed -n '/<script><![CDATA[/,/]]><\/script>/p' $(changedFiles) | awk 'NR>1{print last} {last=$0}')
+    SCRIPT_CONTENT=$(sed -n '/<script><![CDATA[/,/]]><\/script>/p' $(changedFiles) | awk 'BEGIN{p=0} /^]]><\/script>/{p=0} p; /<script><![CDATA\[/{p=1}')
     echo "$SCRIPT_CONTENT" > $(lastPart).js
     echo "$SCRIPT_CONTENT"
     echo $(lastPart).js
