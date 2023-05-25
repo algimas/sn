@@ -58,8 +58,9 @@ steps:
 
 
 
+
 - script: |
-    SCRIPT_CONTENT=$(sed -n '/<script><![CDATA[/,/]]><\/script>/p' $(changedFiles) | awk 'BEGIN{p=0} /^]]><\/script>/{p=0} p; /<script><![CDATA\[/{p=1}')
+    SCRIPT_CONTENT=$(sed -n '/<script><![CDATA[/,/]]><\/script>/p' $(changedFiles) | awk 'BEGIN{p=0} /^<script><!\[CDATA\[/,/^]]><\/script>$/{ if (!/<script><!\[CDATA\[/ && !/]]><\/script>/) p=1; if (p) print }')
     echo "$SCRIPT_CONTENT" > $(lastPart).js
     echo "$SCRIPT_CONTENT"
     echo $(lastPart).js
