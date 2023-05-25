@@ -70,3 +70,25 @@ steps:
 - script: |
     cat $(lastPart).js
   displayName: 'View content'
+
+
+- script: |
+    pip install lxml
+  displayName: 'Install lxml'
+
+- script: |
+    python -c "
+    import lxml.etree as ET
+
+    tree = ET.parse('$(changedFiles)')
+    root = tree.getroot()
+
+    for script in root.iter('script'):
+        with open('script.js', 'w') as f:
+            f.write(script.text.strip())
+    "
+  displayName: 'Extract <script> content to script.js'
+
+- script: |
+    cat script.js
+  displayName: 'View content of script'
