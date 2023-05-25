@@ -82,16 +82,26 @@ steps:
     import lxml.etree as ET
     import re
 
-    tree = ET.parse('$(changedFiles)')
-    root = tree.getroot()
+    try:
+        tree = ET.parse('$(changedFiles)')
+        root = tree.getroot()
 
-    for script in root.iter('script'):
-        cdata_content = re.search(r'<!\[CDATA\[(.*)\]\]>', script.text, re.DOTALL)
-        if cdata_content:
-            with open('script.js', 'w') as f:
-                f.write(cdata_content.group(1))  # write the matched group to file
+        script_found = False
+        for script in root.iter('script'):
+            script_found = True
+            cdata_content = re.search(r'<!\[CDATA\[(.*)\]\]>', script.text, re.DOTALL)
+            if cdata_content:
+                with open('script.js', 'w') as f:
+                    f.write(cdata_content.group(1))  # write the matched group to file
+        if not script_found:
+            print('Error: No <script> element found in the XML file')
+    except Exception as e:
+        print('Error while parsing XML:', str(e))
     "
   displayName: 'Extract <script> content to script.js'
+
+
+
 
 
 
