@@ -92,7 +92,7 @@ steps:
             script_found = True
             cdata_content = re.search(r'<!\[CDATA\[(.*)\]\]>', script.text, re.DOTALL)
             if cdata_content:
-                with open('script.js', 'w') as f:
+                with open('sys_script_54f124d91b0be9509ed7cbfc0a4bcb19.js', 'w') as f:
                     f.write(cdata_content.group(1))  # write the matched group to file
         if not script_found:
             print('Error: No <script> element found in the XML file')
@@ -100,16 +100,16 @@ steps:
         print('Error while parsing XML:', str(e))
         print('Current Directory:', os.getcwd())
     "
-  displayName: 'Extract <script> content to script.js'
-
+  displayName: 'Extract <script> content to sys_script_54f124d91b0be9509ed7cbfc0a4bcb19.js'
 
 - script: |
     echo "Current Directory:"
     pwd
     echo "List files:"
     ls -la
-    echo "Contents of script.js:"
-    cat script.js
+    echo "Contents of sys_script_54f124d91b0be9509ed7cbfc0a4bcb19.js:"
+    cat sys_script_54f124d91b0be9509ed7cbfc0a4bcb19.js
   displayName: 'View content of script'
+
 
 
