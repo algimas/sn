@@ -33,13 +33,13 @@ steps:
     targetType: 'inline'
     script: |
       $xml = '<?xml version="1.0" encoding="UTF-8"?>
-      <testsuites name="just tests-v3" tests="1" failures="0" errors="0" time="0.457">
+      <testsuites name="just tests-v4" tests="1" failures="0" errors="0" time="0.457">
         <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2022-03-15T09:08:13" time="0.4" tests="1">
           <testcase classname=" 0 is 0" name=" 0 is 0" time="0.003">
           </testcase>
         </testsuite>
       </testsuites>'
-      $xml | Out-File br.xml
+      $xml | Out-File br4.xml
     pwsh: true
     workingDirectory: '$(Build.SourcesDirectory)'
 
@@ -49,7 +49,7 @@ steps:
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
     configFile: 'br.xml'
-    namePath: 'br.xml'
+    namePath: 'br4.xml'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
