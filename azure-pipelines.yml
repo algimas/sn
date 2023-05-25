@@ -23,6 +23,10 @@ steps:
   displayName: 'Display changed files'
 
 - script: |
+    cat $(changedFiles)
+  displayName: 'View content of changedFiles-1'
+
+- script: |
     if [[ "$(changedFiles)" == global* ]]; then
       echo "##vso[task.setvariable variable=startsWithGlobal]true"
       LAST_PART=$(basename $(changedFiles))
