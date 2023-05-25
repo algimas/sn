@@ -25,6 +25,8 @@ steps:
 - script: |
     if [[ "$(changedFiles)" == global* ]]; then
       echo "##vso[task.setvariable variable=startsWithGlobal]true"
+      LAST_PART=$(basename $(changedFiles))
+      echo "##vso[task.setvariable variable=lastPart]$LAST_PART"
     else
       echo "##vso[task.setvariable variable=startsWithGlobal]false"
     fi
@@ -37,8 +39,8 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-    configFile: './global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18'
-    namePath: 'sys_script_600a6e341b8369509ed7cbfc0a4bcb18'
+    configFile: './global/$(lastPart)'
+    namePath: '$(lastPart)'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
