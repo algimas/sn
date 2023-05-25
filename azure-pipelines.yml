@@ -53,9 +53,11 @@ steps:
 - script: |
     SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(changedFiles))
     echo "$SCRIPT_CONTENT" > $(lastPart).js
+    echo "$SCRIPT_CONTENT"
+    echo $(lastPart).js
   displayName: 'Extract <script> content to $(lastPart).js'
 
 
 - script: |
-    cut $(lastPart).js
+    cat $(lastPart).js
   displayName: 'View content'
