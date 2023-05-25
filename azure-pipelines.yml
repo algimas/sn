@@ -11,8 +11,8 @@ pool:
 
 steps:
 
-#- script: cat algimas/sn/global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18
-#  displayName: 'Cat-read file'
+- script: cat ./global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18
+  displayName: 'Cat-read file'
 
 #      find "." -type f -name "*.yaml"  >> $(Build.ArtifactStagingDirectory)/filenames.txt
 
