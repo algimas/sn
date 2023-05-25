@@ -80,16 +80,20 @@ steps:
     python -c "
     import lxml.etree as ET
 
+    def remove_cdata_tags(text):
+        return text.replace('<![CDATA[', '').replace(']]>', '')
+
     tree = ET.parse('$(changedFiles)')
     root = tree.getroot()
 
     for script in root.iter('script'):
         cdata = script.text  # get CDATA content
-        cdata_content = cdata[9:-3]  # remove CDATA tags
+        cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
         with open('script.js', 'w') as f:
             f.write(cdata_content.strip())
     "
   displayName: 'Extract <script> content to script.js'
+
 
 
 - script: |
