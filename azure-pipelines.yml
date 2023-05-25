@@ -10,11 +10,8 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-
-- script: cat ./global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18
-  displayName: 'Cat-read file'
-
-#      find "." -type f -name "*.yaml"  >> $(Build.ArtifactStagingDirectory)/filenames.txt
+- checkout: self
+  fetchDepth: 2
 
 - script: git diff --name-only HEAD~1 HEAD
   displayName: 'Get changed files'
