@@ -2,8 +2,6 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
-variables:
-  fileName: 'empty'
 
 trigger:
 - master
@@ -15,14 +13,15 @@ steps:
 - checkout: self
   fetchDepth: 2
 
-- script: echo ${{ variables.fileName }}
-  displayName: 'Show before file'
-
-- script: git diff --name-only HEAD~1 HEAD >> ${{ variables.fileName }}
+- script: |
+    FILES=$(git diff --name-only HEAD~1 HEAD)
+    echo "##vso[task.setvariable variable=changedFiles]$FILES"
   displayName: 'Get changed files'
 
-- script: echo ${{ variables.fileName }}
-  displayName: 'Show changed files'
+- script: |
+    echo $(changedFiles)
+  displayName: 'Display changed files'
+
 
 - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
   inputs:
