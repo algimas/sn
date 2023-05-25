@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- stop
 
 pool:
   vmImage: ubuntu-latest
@@ -17,3 +17,31 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $xml = '<?xml version="1.0" encoding="UTF-8"?>
+      <testsuites name="just tests-v3" tests="1" failures="0" errors="0" time="0.457">
+        <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2022-03-15T09:08:13" time="0.4" tests="1">
+          <testcase classname=" 0 is 0" name=" 0 is 0" time="0.003">
+          </testcase>
+        </testsuite>
+      </testsuites>'
+      $xml | Out-File br2.xml
+    pwsh: true
+    workingDirectory: '$(Build.SourcesDirectory)'
+
+- task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+  inputs:
+    connectedServiceName: 'snow8'
+    applicationName: 'Snow8Demo'
+    uploadTarget: 'component'
+    configFile: 'br2.xml'
+    namePath: 'br2.xml'
+    dataFormat: 'xml'
+    autoValidate: true
+    autoCommit: true
+    convertPath: true
