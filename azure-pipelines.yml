@@ -46,14 +46,20 @@ steps:
     autoCommit: true
     convertPath: true
 
-- script: |
-    sudo apt-get install -y xmlstarlet
-  displayName: 'Install xmlstarlet'
+#- script: |
+#    sudo apt-get install -y xmlstarlet
+#  displayName: 'Install xmlstarlet'
+
+#- script: |
+#    SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(changedFiles))
+#    echo "$SCRIPT_CONTENT" > $(lastPart).js
+#  displayName: 'Extract <script> content to $(lastPart).js'
 
 - script: |
-    SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(changedFiles))
+    SCRIPT_CONTENT=$(sed -n '/<![CDATA[/,/]]>/p' $(changedFiles) | awk 'NR>1{print last} {last=$0}')
     echo "$SCRIPT_CONTENT" > $(lastPart).js
-  displayName: 'Extract <script> content to $(lastPart).js'
+  displayName: 'Extract <script> content to script.js'
+
 
 - script: |
     cat $(lastPart).js
