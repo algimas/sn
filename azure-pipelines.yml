@@ -4,20 +4,15 @@
 # https://aka.ms/yaml
 
 trigger:
-- stop
+- STOPtest
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
+- script: cat algimas/sn/global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18
+  displayName: 'Cat-read file'
 
 - task: PowerShell@2
   inputs:
