@@ -56,7 +56,6 @@ steps:
 #  displayName: 'Extract <script> content to $(lastPart).js'
 
 
-
 - script: |
     pip install lxml
   displayName: 'Install lxml'
@@ -65,28 +64,21 @@ steps:
 - script: |
     python -c "
     import lxml.etree as ET
-    import re
-    import os
-    
-    print('begin try...')
-    try:
-        tree = ET.parse('$(changedFiles)')
-        root = tree.getroot()
 
-        script_found = False
-        for script in root.iter('script'):
-            script_found = True
-            cdata_content = re.search(r'<!\[CDATA\[(.*)\]\]>', script.text, re.DOTALL)
-            if cdata_content:
-                with open('script.js', 'w') as f:
-                    f.write(cdata_content.group(1))  # write the matched group to file
-        if not script_found:
-            print('Error: No <script> element found in the XML file')
-    except Exception as e:
-        print('Error while parsing XML:', str(e))
-        print('Current Directory:', os.getcwd())
+    def remove_cdata_tags(text):
+        return text.replace('<![CDATA[', '').replace(']]>', '')
+
+    tree = ET.parse('$(changedFiles)')
+    root = tree.getroot()
+
+    for script in root.iter('script'):
+        cdata = script.text  # get CDATA content
+        cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
+        with open('script.js', 'w') as f:
+            f.write(cdata_content.strip())
     "
   displayName: 'Extract <script> content to script.js'
+
 
 - script: |
     echo "Current Directory:"
@@ -96,6 +88,3 @@ steps:
     echo "Contents of script.js:"
     cat script.js
   displayName: 'View content of script'
-
-
-
