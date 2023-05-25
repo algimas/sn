@@ -29,6 +29,7 @@ steps:
       echo "##vso[task.setvariable variable=lastPart]$LAST_PART"
     else
       echo "##vso[task.setvariable variable=startsWithGlobal]false"
+      exit 1
     fi
   displayName: 'Check if changedFiles starts with "global"'
 
@@ -45,3 +46,12 @@ steps:
     autoValidate: true
     autoCommit: true
     convertPath: true
+
+- script: |
+    sudo apt-get install -y xmlstarlet
+  displayName: 'Install xmlstarlet'
+
+- script: |
+    SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(lastPart))
+    echo "$SCRIPT_CONTENT" > $(lastPart).js
+  displayName: 'Extract <script> content to $(lastPart).js'
