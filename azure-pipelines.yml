@@ -11,8 +11,22 @@ pool:
 
 steps:
 
-- script: cat algimas/sn/global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18
-  displayName: 'Cat-read file'
+#- script: cat algimas/sn/global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18
+#  displayName: 'Cat-read file'
+
+#      find "." -type f -name "*.yaml"  >> $(Build.ArtifactStagingDirectory)/filenames.txt
+
+
+- task: Bash@3
+  name:  findfile
+  displayName: findfile
+  inputs:
+    targetType: 'inline' 
+    workingDirectory: $(Build.SourcesDirectory)
+    script: | 
+      find "." -type f -name "sys_script_600a6e341b8369509ed7cbfc0a4bcb18"  >> $(Build.ArtifactStagingDirectory)/filename.txt
+      cat $(Build.ArtifactStagingDirectory)/filename.txt
+
 
 - task: PowerShell@2
   inputs:
