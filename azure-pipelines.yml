@@ -39,7 +39,7 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-    configFile: './global/$(lastPart)'
+    configFile: '$(changedFiles)'
     namePath: '$(lastPart)'
     dataFormat: 'xml'
     autoValidate: true
@@ -53,10 +53,7 @@ steps:
 - script: |
     SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(changedFiles))
     echo "$SCRIPT_CONTENT" > $(lastPart).js
-    echo "$SCRIPT_CONTENT"
-    echo $(lastPart).js
   displayName: 'Extract <script> content to $(lastPart).js'
-
 
 - script: |
     cat $(lastPart).js
