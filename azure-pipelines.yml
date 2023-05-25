@@ -16,8 +16,7 @@ steps:
 
 #      find "." -type f -name "*.yaml"  >> $(Build.ArtifactStagingDirectory)/filenames.txt
 
-- script: |
-    git diff --name-only HEAD~1 HEAD
+- script: git diff --name-only HEAD~1 HEAD
   displayName: 'Get changed files'
 
 
