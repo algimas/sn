@@ -25,7 +25,7 @@ steps:
           </testcase>
         </testsuite>
       </testsuites>'
-      $xml | Out-File br2.xml
+      $xml | Out-File br.xml
     pwsh: true
     workingDirectory: '$(Build.SourcesDirectory)'
 
@@ -34,8 +34,8 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-    configFile: 'br2.xml'
-    namePath: 'br2.xml'
+    configFile: 'br.xml'
+    namePath: 'br.xml'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
