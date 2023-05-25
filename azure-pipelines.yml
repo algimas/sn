@@ -79,16 +79,23 @@ steps:
 - script: |
     python -c "
     import lxml.etree as ET
+    import re
+
+    def extract_cdata(text):
+        pattern = r'<!\[CDATA\[(.*?)\]\]>'
+        match = re.search(pattern, text, re.DOTALL)  # re.DOTALL makes '.' match newline characters as well
+        return match.group(1) if match else ''
 
     tree = ET.parse('$(changedFiles)')
     root = tree.getroot()
 
     for script in root.iter('script'):
-        cdata_content = ET.CDATA(script.text)  # get CDATA content directly
+        cdata_content = extract_cdata(script.text)  # extract CDATA content using regex
         with open('script.js', 'w') as f:
-            f.write(str(cdata_content))  # str() is needed because CDATA() returns an lxml.etree.CDATA object
+            f.write(cdata_content.strip())
     "
   displayName: 'Extract <script> content to script.js'
+
 
 
 
