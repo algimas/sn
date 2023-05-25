@@ -81,6 +81,7 @@ steps:
     python -c "
     import lxml.etree as ET
     import re
+    import os
 
     try:
         tree = ET.parse('$(changedFiles)')
@@ -97,15 +98,18 @@ steps:
             print('Error: No <script> element found in the XML file')
     except Exception as e:
         print('Error while parsing XML:', str(e))
+        print('Current Directory:', os.getcwd())
     "
   displayName: 'Extract <script> content to script.js'
 
 
-
-
-
-
-
 - script: |
+    echo "Current Directory:"
+    pwd
+    echo "List files:"
+    ls -la
+    echo "Contents of script.js:"
     cat script.js
   displayName: 'View content of script'
+
+
