@@ -48,8 +48,8 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-    configFile: 'br4.xml'
-    namePath: 'br.xml'
+    configFile: './global/sys_script_600a6e341b8369509ed7cbfc0a4bcb18'
+    namePath: 'sys_script_600a6e341b8369509ed7cbfc0a4bcb18'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
