@@ -24,7 +24,7 @@ steps:
 
 - script: |
     cat $(changedFiles)
-  displayName: 'View content of changedFiles-1'
+  displayName: 'View content of changedFiles'
 
 - script: |
     if [[ "$(changedFiles)" == global* ]]; then
@@ -50,18 +50,6 @@ steps:
     autoCommit: true
     convertPath: true
 
-#- script: |
-#    sudo apt-get install -y xmlstarlet
-#  displayName: 'Install xmlstarlet'
-
-#- script: |
-#    SCRIPT_CONTENT=$(xmlstarlet sel -t -v "//script" $(changedFiles))
-#    echo "$SCRIPT_CONTENT" > $(lastPart).js
-#  displayName: 'Extract <script> content to $(lastPart).js'
-
-- script: |
-    cat $(changedFiles)
-  displayName: 'View content of changedFiles'
 
 
 - script: |
@@ -81,7 +69,9 @@ steps:
 
     for script in root.iter('script'):
         cdata = script.text  # get CDATA content
+        print(cdata)
         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
+        print(cdata_content)
         with open('script.js', 'w') as f:
             f.write(cdata_content.strip())
     "
