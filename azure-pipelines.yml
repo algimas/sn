@@ -4,7 +4,13 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - global/*
+
 
 pool:
   vmImage: ubuntu-latest
@@ -31,6 +37,8 @@ steps:
       echo "##vso[task.setvariable variable=startsWithGlobal]true"
       LAST_PART=$(basename $(changedFiles))
       echo "##vso[task.setvariable variable=lastPart]$LAST_PART"
+      FIRST_PART=${LAST_PART:0:-33}
+      echo "##vso[task.setvariable variable=firstPart]$FIRST_PART"
     else
       echo "##vso[task.setvariable variable=startsWithGlobal]false"
       exit 1
@@ -185,7 +193,7 @@ steps:
 #    configFile: '$(changedFiles)'
     configFile: '$(lastPart)'
 #    namePath: '$(lastPart)'
-    namePath: 'BR'
+    namePath: '$(firstPart)'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
