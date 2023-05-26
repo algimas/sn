@@ -2,30 +2,22 @@
 
     var updateGr = new GlideRecord('sys_update_xml');
     updateGr.addQuery('update_set', current.getUniqueValue());
-    updateGr.addQuery('type', 'Business Rule');
+    updateGr.addQuery('type', 'IN', 'Business Rule, System Property, Script Include');
     updateGr.orderBy('sys_updated_on'); // if multiple records for the same thus take from oldest to the newest
-    updateGr.setLimit(10);
+    updateGr.setLimit(500); // just in case
     updateGr.query();
     while (updateGr.next()) {
         try {
             var inputs = {};
             inputs['sysupdatexml'] = updateGr; // GlideRecord of table: sys_update_xml 
-            // Start Asynchronously: Uncomment to run in background. Code snippet will not have access to outputs.
-            // sn_fd.FlowAPI.getRunner().subflow('global.devsecopscommitupdateset').inBackground().withInputs(inputs).run();
-
-            // Execute Synchronously: Run in foreground. Code snippet has access to outputs.
             var result = sn_fd.FlowAPI.getRunner().subflow('global.devsecopscommitupdateset').inForeground().withInputs(inputs).run();
             var outputs = result.getOutputs();
-
-            // Get Outputs:
-            // Note: outputs can only be retrieved when executing synchronously.
             var finalresponse = outputs['finalresponse']; // String
-            gs.warn('>>>DevSecOps-Push2GitHub>>>' + updateGr.getValue('name') + ';finalresponse=' + finalresponse);
-
+            gs.warn('>>>DevSecOps-Push2GitHub>>>' + updateGr.getValue('name') + ' ' + updateGr.getValue('type') + ';finalresponse=' + finalresponse);
         } catch (ex) {
             var message = ex.getMessage();
             gs.error('>>>DevSecOps-Push2GitHub>>>' + message);
         }
     }
 
-})(current, previous);]]></script><sys_class_name>sys_script</sys_class_name><sys_created_by>algis</sys_created_by><sys_created_on>2023-05-24 13:14:13</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>e661cf781b0769509ed7cbfc0a4bcb6a</sys_id><sys_mod_count>18</sys_mod_count><sys_name>DevSecOps-Push2GitHub</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_script_e661cf781b0769509ed7cbfc0a4bcb6a</sys_update_name><sys_updated_by>algis</sys_updated_by><sys_updated_on>2023-05-24 15:05:14</sys_updated_on><template/><when>after</when></sys_script><sys_translated_text action="delete_multiple" query="documentkey=e661cf781b0769509ed7cbfc0a4bcb6a"/></record_update>
+})(current, previous);]]></script><sys_class_name>sys_script</sys_class_name><sys_created_by>algis</sys_created_by><sys_created_on>2023-05-24 13:14:13</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>e661cf781b0769509ed7cbfc0a4bcb6a</sys_id><sys_mod_count>20</sys_mod_count><sys_name>DevSecOps-Push2GitHub</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_script_e661cf781b0769509ed7cbfc0a4bcb6a</sys_update_name><sys_updated_by>algis</sys_updated_by><sys_updated_on>2023-05-26 13:10:26</sys_updated_on><template/><when>after</when></sys_script><sys_translated_text action="delete_multiple" query="documentkey=e661cf781b0769509ed7cbfc0a4bcb6a"/></record_update>
