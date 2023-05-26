@@ -121,7 +121,7 @@ steps:
     deployableName: 'TestJS'
     exporterName: 'returnAllData_noVars-nowPreview'
     saveFile: true
-    fileName: '$(Build.SourcesDirectory)/config_eslint.json'
+    fileName: 'config_eslint.json'
 
 
 - script: |
