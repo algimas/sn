@@ -161,6 +161,18 @@ steps:
     npm install prettier
   displayName: 'Install Prettier'
 
+# - script: |
+#     npx prettier --check $(hashValue).js
+#   displayName: 'Prettier Code Formatting'
+
 - script: |
-    npx prettier --check $(hashValue).js
+    npx prettier $(hashValue).js
   displayName: 'Prettier Code Formatting'
+
+- script: |
+    npx prettier --write $(hashValue).js
+  displayName: 'Prettier Code Formatting'
+
+- script: |
+    cat $(hashValue).js
+  displayName: 'Print final'
