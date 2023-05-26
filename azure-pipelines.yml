@@ -53,13 +53,8 @@ steps:
 
 
 - script: |
-    pip install lxml
-  displayName: 'Install lxml'
-
-
-- script: |
     python -c "
-    import lxml.etree as ET
+    import xml.etree.ElementTree as ET
 
     def remove_cdata_tags(text):
         return text.replace('<![CDATA[', '').replace(']]>', '')
@@ -76,6 +71,7 @@ steps:
             f.write(cdata_content.strip())
     "
   displayName: 'Extract <script> content to script.js'
+
 
 
 - script: |
