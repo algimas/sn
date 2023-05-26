@@ -114,12 +114,19 @@ steps:
     convertPath: true
 
 
-- task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+- task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
   inputs:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     deployableName: 'TestJS'
+    exporterName: 'eslint'
+    saveFile: true
+    fileName: 'config_eslint.json'
 
+
+- script: |
+    cat config_eslint.json
+  displayName: 'View content of config_eslint.json'
 
 # - script: |
 #     echo '{
