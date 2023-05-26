@@ -114,6 +114,13 @@ steps:
     convertPath: true
 
 
+- task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+  inputs:
+    connectedServiceName: 'snow8'
+    applicationName: 'Snow8Demo'
+    deployableName: 'TestJS'
+
+
 # - script: |
 #     echo '{
 #         "env": {
