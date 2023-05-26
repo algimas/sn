@@ -47,86 +47,6 @@ steps:
 
 
 
-
-
-# - script: |
-#     pip install beautifulsoup4 lxml
-#   displayName: 'Install beautifulsoup4 and lxml'
-
-# - script: |
-#     python -c "
-#     from bs4 import BeautifulSoup
-
-#     def remove_cdata_tags(text):
-#         return text.replace('<![CDATA[', '').replace(']]>', '')
-
-#     with open('$(changedFiles)', 'r') as f:
-#         contents = f.read()
-
-#     soup = BeautifulSoup(contents, 'lxml')
-
-#     for script in soup.find_all('script'):
-#         cdata = script.string  # get CDATA content
-#         print(cdata)
-#         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-#         print(cdata_content)
-#         with open('script.js', 'w') as f:
-#             f.write(cdata_content)
-#     "
-#   displayName: 'Extract <script> content to script.js'
-###### works with single file
-# - script: |
-#     python -c "
-#     import xml.etree.ElementTree as ET
-
-#     def remove_cdata_tags(text):
-#         return text.replace('<![CDATA[', '').replace(']]>', '')
-
-#     tree = ET.parse('$(changedFiles)')
-#     root = tree.getroot()
-
-#     for script in root.iter('script'):
-#         cdata = script.text  # get CDATA content
-#         # print(cdata)
-#         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-#         # print(cdata_content)
-#         with open('script.js', 'w') as f:
-#             f.write(cdata_content + '\n') # magic \n must be added else f.write is not able to get the very last line
-#     "
-#   displayName: 'Extract <script> content to script.js'
-
-
-
-# - script: |
-#     python -c "
-#     import xml.etree.ElementTree as ET
-#     import hashlib
-
-#     def remove_cdata_tags(text):
-#         return text.replace('<![CDATA[', '').replace(']]>', '')
-
-#     def hash_content(content):
-#         return hashlib.sha256(content.encode()).hexdigest()
-
-#     tree = ET.parse('$(changedFiles)')
-#     root = tree.getroot()
-
-#     for script in root.iter('script'):
-#         cdata = script.text  # get CDATA content
-#         print(cdata)
-#         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-#         print(cdata_content)
-#         hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
-#         print(hash_value)
-#         script.text = hash_value  # replace the content of the script tag with the hash value
-#         with open('script.js', 'w') as f:
-#             f.write(cdata_content + '\n')
-
-#     # Write the modified XML to a new file
-#     tree.write('modified.xml')
-#     "
-#   displayName: 'Extract <script> content to script.js'
-
 - script: |
     pip install lxml
   displayName: 'Install lxml'
@@ -190,9 +110,7 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-#    configFile: '$(changedFiles)'
     configFile: '$(lastPart)'
-#    namePath: '$(lastPart)'
     namePath: '$(firstPart)'
     dataFormat: 'xml'
     autoValidate: true
@@ -238,3 +156,11 @@ steps:
 - script: |
     npx eslint $(hashValue).js || true
   displayName: 'ESLint Check'
+
+- script: |
+    npm install prettier
+  displayName: 'Install Prettier'
+
+- script: |
+    npx prettier --check $(hashValue).js
+  displayName: 'Prettier Code Formatting'
