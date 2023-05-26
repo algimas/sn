@@ -137,8 +137,8 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-#    configFile: '$(changedFiles)'
-    configFile: '$(lastPart)'
+    configFile: '$(changedFiles)'
+#    configFile: '$(lastPart)'
     namePath: '$(lastPart)'
     dataFormat: 'xml'
     autoValidate: true
