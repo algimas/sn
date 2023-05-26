@@ -147,8 +147,13 @@ steps:
             print(cdata_content)
             hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
             script.text = hash_value  # replace the content of the script tag with the hash value
-            with open('script.js', 'w') as f:
+            # with open('script.js', 'w') as f:
+            with open(f'{hash_value}.js', 'w') as f:
                 f.write(cdata_content + '\n')
+
+        # Set an environment variable with the hash value.
+        # This will be converted to a pipeline variable in the next step.
+        os.environ['HASH_VALUE'] = hash_value
 
     # Write the modified XML to a new file
     tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
@@ -157,13 +162,12 @@ steps:
 
 
 - script: |
+    echo "##vso[task.setvariable variable=hashValue]$HASH_VALUE"
     echo "Current Directory:"
     pwd
     echo "List files:"
     ls -la
-    echo "####################Contents of script.js:"
-    cat script.js
-    echo "####################Contents of modified.xml:"
+    cat $(hashValue).js
     cat $(lastPart)
   displayName: 'View content of script and modified.xml'
 
@@ -176,7 +180,8 @@ steps:
     uploadTarget: 'component'
 #    configFile: '$(changedFiles)'
     configFile: '$(lastPart)'
-    namePath: '$(lastPart)'
+#    namePath: '$(lastPart)'
+    namePath: 'BR'
     dataFormat: 'xml'
     autoValidate: true
     autoCommit: true
@@ -219,5 +224,5 @@ steps:
 #   displayName: 'ESLint Check'
 
 - script: |
-    npx eslint script.js || true
+    npx eslint $(hashValue).js || true
   displayName: 'ESLint Check'
