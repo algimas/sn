@@ -112,6 +112,33 @@ steps:
   
 
 - script: |
+    echo '{
+        "env": {
+            "browser": true,
+            "es6": true
+        },
+        "globals": {
+            "current": "readonly",
+            "previous": "readonly",
+            "g_scratchpad": "readonly",
+            "gs": "readonly",
+            "GlideRecord": "readonly",
+            "GlideElement": "readonly",
+            "GlideSystem": "readonly",
+            "GlideAjax": "readonly"
+        },
+        "extends": "eslint:recommended",
+        "parserOptions": {
+            "ecmaVersion": 2015
+        },
+        "rules": {
+        }
+    }' > .eslintrc.json
+  displayName: 'Create ESLint configuration'
+
+
+
+- script: |
     npm install eslint
   displayName: 'Install ESLint'
 
