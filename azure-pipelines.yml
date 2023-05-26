@@ -11,7 +11,6 @@ trigger:
     include:
     - global/*
 
-
 pool:
   vmImage: ubuntu-latest
 
@@ -45,12 +44,9 @@ steps:
     fi
   displayName: 'Check if changedFiles starts with "global"'
 
-
-
 - script: |
     pip install lxml
   displayName: 'Install lxml'
-
 
 - script: |
     python -c "
@@ -118,30 +114,30 @@ steps:
     convertPath: true
 
 
-- script: |
-    echo '{
-        "env": {
-            "browser": true,
-            "es6": true
-        },
-        "globals": {
-            "current": "readonly",
-            "previous": "readonly",
-            "g_scratchpad": "readonly",
-            "gs": "readonly",
-            "GlideRecord": "readonly",
-            "GlideElement": "readonly",
-            "GlideSystem": "readonly",
-            "GlideAjax": "readonly"
-        },
-        "extends": "eslint:recommended",
-        "parserOptions": {
-            "ecmaVersion": 2015
-        },
-        "rules": {
-        }
-    }' > .eslintrc.json
-  displayName: 'Create ESLint configuration'
+# - script: |
+#     echo '{
+#         "env": {
+#             "browser": true,
+#             "es6": true
+#         },
+#         "globals": {
+#             "current": "readonly",
+#             "previous": "readonly",
+#             "g_scratchpad": "readonly",
+#             "gs": "readonly",
+#             "GlideRecord": "readonly",
+#             "GlideElement": "readonly",
+#             "GlideSystem": "readonly",
+#             "GlideAjax": "readonly"
+#         },
+#         "extends": "eslint:recommended",
+#         "parserOptions": {
+#             "ecmaVersion": 2015
+#         },
+#         "rules": {
+#         }
+#     }' > .eslintrc.json
+#   displayName: 'Create ESLint configuration'
 
 
 
