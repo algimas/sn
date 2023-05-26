@@ -149,8 +149,10 @@ steps:
 #     npx eslint script.js # this stops pipeline because of identified JS errors, problems
 #   displayName: 'ESLint Check'
 
+# npx eslint -c path_to_your_eslint_config_file script.js || true
+
 - script: |
-    npx eslint $(hashValue).js || true
+    npx eslint -c sn_eslint_config.json $(hashValue).js || true
   displayName: 'ESLint Check'
 
 - script: |
