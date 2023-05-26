@@ -127,8 +127,9 @@ steps:
     ls -la
     echo "Contents of script.js:"
     cat script.js
+    echo "Contents of modified.xml:"
     cat modified.xml
-  displayName: 'View content of script'
+  displayName: 'View content of script and modified.xml'
 
 
 - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
