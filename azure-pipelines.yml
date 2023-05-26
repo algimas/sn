@@ -90,11 +90,11 @@ steps:
 
     for script in root.iter('script'):
         cdata = script.text  # get CDATA content
-        print(cdata)
+        # print(cdata)
         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-        print(cdata_content)
+        # print(cdata_content)
         with open('script.js', 'w') as f:
-            f.write(cdata_content + '\n')
+            f.write(cdata_content + '\n') # magic \n must be added else f.write is not able to get the very last line
     "
   displayName: 'Extract <script> content to script.js'
 
@@ -109,3 +109,12 @@ steps:
     echo "Contents of script.js:"
     cat script.js
   displayName: 'View content of script'
+  
+
+- script: |
+    npm install eslint
+  displayName: 'Install ESLint'
+
+- script: |
+    npx eslint script.js
+  displayName: 'ESLint Check'
