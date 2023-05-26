@@ -52,44 +52,24 @@ steps:
 
 
 
-# - script: |
-#     pip install beautifulsoup4 lxml
-#   displayName: 'Install beautifulsoup4 and lxml'
-
-# - script: |
-#     python -c "
-#     from bs4 import BeautifulSoup
-
-#     def remove_cdata_tags(text):
-#         return text.replace('<![CDATA[', '').replace(']]>', '')
-
-#     with open('$(changedFiles)', 'r') as f:
-#         contents = f.read()
-
-#     soup = BeautifulSoup(contents, 'lxml')
-
-#     for script in soup.find_all('script'):
-#         cdata = script.string  # get CDATA content
-#         print(cdata)
-#         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-#         print(cdata_content)
-#         with open('script.js', 'w') as f:
-#             f.write(cdata_content.strip())
-#     "
-#   displayName: 'Extract <script> content to script.js'
+- script: |
+    pip install beautifulsoup4 lxml
+  displayName: 'Install beautifulsoup4 and lxml'
 
 - script: |
     python -c "
-    import xml.etree.ElementTree as ET
+    from bs4 import BeautifulSoup
 
     def remove_cdata_tags(text):
         return text.replace('<![CDATA[', '').replace(']]>', '')
 
-    tree = ET.parse('$(changedFiles)')
-    root = tree.getroot()
+    with open('$(changedFiles)', 'r') as f:
+        contents = f.read()
 
-    for script in root.iter('script'):
-        cdata = script.text  # get CDATA content
+    soup = BeautifulSoup(contents, 'lxml')
+
+    for script in soup.find_all('script'):
+        cdata = script.string  # get CDATA content
         print(cdata)
         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
         print(cdata_content)
@@ -97,6 +77,26 @@ steps:
             f.write(cdata_content)
     "
   displayName: 'Extract <script> content to script.js'
+
+# - script: |
+#     python -c "
+#     import xml.etree.ElementTree as ET
+
+#     def remove_cdata_tags(text):
+#         return text.replace('<![CDATA[', '').replace(']]>', '')
+
+#     tree = ET.parse('$(changedFiles)')
+#     root = tree.getroot()
+
+#     for script in root.iter('script'):
+#         cdata = script.text  # get CDATA content
+#         print(cdata)
+#         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
+#         print(cdata_content)
+#         with open('script.js', 'w') as f:
+#             f.write(cdata_content)
+#     "
+#   displayName: 'Extract <script> content to script.js'
 
 
 
