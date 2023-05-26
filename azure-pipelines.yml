@@ -121,6 +121,7 @@ steps:
     deployableName: 'TestJS'
 #    exporterName: 'returnAllData_noVars-nowPreview'
     exporterName: 'returnAllData-now'
+    dataFormat: 'json'
     saveFile: true
     fileName: 'config_eslint.json'
 
