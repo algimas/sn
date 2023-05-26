@@ -151,7 +151,7 @@ steps:
                 f.write(cdata_content + '\n')
 
     # Write the modified XML to a new file
-    tree.write('modified.xml', pretty_print=True, xml_declaration=True, encoding='utf-8')
+    tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
     "
   displayName: 'Extract <script> content to script.js'
 
@@ -161,10 +161,10 @@ steps:
     pwd
     echo "List files:"
     ls -la
-    echo "Contents of script.js:"
+    echo "####################Contents of script.js:"
     cat script.js
-    echo "Contents of modified.xml:"
-    cat modified.xml
+    echo "####################Contents of modified.xml:"
+    cat $(lastPart)
   displayName: 'View content of script and modified.xml'
 
 
@@ -174,8 +174,8 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     uploadTarget: 'component'
-    configFile: '$(changedFiles)'
-#    configFile: '$(lastPart)'
+#    configFile: '$(changedFiles)'
+    configFile: '$(lastPart)'
     namePath: '$(lastPart)'
     dataFormat: 'xml'
     autoValidate: true
