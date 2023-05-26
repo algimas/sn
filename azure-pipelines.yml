@@ -37,18 +37,7 @@ steps:
     fi
   displayName: 'Check if changedFiles starts with "global"'
 
-- task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
-  condition: eq(variables['startsWithGlobal'], 'true')
-  inputs:
-    connectedServiceName: 'snow8'
-    applicationName: 'Snow8Demo'
-    uploadTarget: 'component'
-    configFile: '$(changedFiles)'
-    namePath: '$(lastPart)'
-    dataFormat: 'xml'
-    autoValidate: true
-    autoCommit: true
-    convertPath: true
+
 
 
 
@@ -77,28 +66,56 @@ steps:
 #             f.write(cdata_content)
 #     "
 #   displayName: 'Extract <script> content to script.js'
+###### works with single file
+# - script: |
+#     python -c "
+#     import xml.etree.ElementTree as ET
+
+#     def remove_cdata_tags(text):
+#         return text.replace('<![CDATA[', '').replace(']]>', '')
+
+#     tree = ET.parse('$(changedFiles)')
+#     root = tree.getroot()
+
+#     for script in root.iter('script'):
+#         cdata = script.text  # get CDATA content
+#         # print(cdata)
+#         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
+#         # print(cdata_content)
+#         with open('script.js', 'w') as f:
+#             f.write(cdata_content + '\n') # magic \n must be added else f.write is not able to get the very last line
+#     "
+#   displayName: 'Extract <script> content to script.js'
 
 - script: |
     python -c "
     import xml.etree.ElementTree as ET
+    import hashlib
 
     def remove_cdata_tags(text):
         return text.replace('<![CDATA[', '').replace(']]>', '')
+
+    def hash_content(content):
+        return hashlib.sha256(content.encode()).hexdigest()
 
     tree = ET.parse('$(changedFiles)')
     root = tree.getroot()
 
     for script in root.iter('script'):
         cdata = script.text  # get CDATA content
-        # print(cdata)
+        print(cdata)
         cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-        # print(cdata_content)
+        print(cdata_content)
+        hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
+        script.text = hash_value  # replace the content of the script tag with the hash value
         with open('script.js', 'w') as f:
-            f.write(cdata_content + '\n') # magic \n must be added else f.write is not able to get the very last line
+            f.write(cdata_content + '\n')
+
+    # Write the modified XML to a new file
+    # tree.write('modified.xml')
+      tree.write('$(lastPart)')
     "
   displayName: 'Extract <script> content to script.js'
-
-
 
 
 - script: |
@@ -108,8 +125,24 @@ steps:
     ls -la
     echo "Contents of script.js:"
     cat script.js
+    cat $(lastPart)
   displayName: 'View content of script'
-  
+
+
+- task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+  condition: eq(variables['startsWithGlobal'], 'true')
+  inputs:
+    connectedServiceName: 'snow8'
+    applicationName: 'Snow8Demo'
+    uploadTarget: 'component'
+#    configFile: '$(changedFiles)'
+    configFile: '$(lastPart)'
+    namePath: '$(lastPart)'
+    dataFormat: 'xml'
+    autoValidate: true
+    autoCommit: true
+    convertPath: true
+
 
 - script: |
     echo '{
