@@ -119,7 +119,7 @@ steps:
     connectedServiceName: 'snow8'
     applicationName: 'Snow8Demo'
     deployableName: 'TestJS'
-    exporterName: 'returnAllData-now'
+    exporterName: 'returnESLint'
     dataFormat: 'json'
     saveFile: true
     fileName: 'config_eslint.json'
@@ -138,24 +138,24 @@ steps:
       cat $(Pipeline.Workspace)/config_eslint.json
   displayName: 'List content'
 
-- script: |
-    cat -v $(Pipeline.Workspace)/config_eslint.json
-  displayName: 'View content of config_eslint.json'
-
-- script: |
-    echo "File content:"
-    iconv -f UTF-16 -t UTF-8 /home/vsts/work/1/config_eslint.json | cat -v
-  displayName: 'Inspect File'
-
-- script: |
-    echo "File content:"
-    less /home/vsts/work/1/config_eslint.json
-  displayName: 'Inspect File-less'
-
+# - script: |
+#     cat -v $(Pipeline.Workspace)/config_eslint.json
+#   displayName: 'View content of config_eslint.json'
 
 # - script: |
-#     hexdump -C $(Pipeline.Workspace)/config_eslint.json
-#   displayName: 'View content of config_eslint.json'
+#     echo "File content:"
+#     iconv -f UTF-16 -t UTF-8 /home/vsts/work/1/config_eslint.json | cat -v
+#   displayName: 'Inspect File'
+
+# - script: |
+#     echo "File content:"
+#     less /home/vsts/work/1/config_eslint.json
+#   displayName: 'Inspect File-less'
+
+
+- script: |
+    hexdump -C $(Pipeline.Workspace)/config_eslint.json
+  displayName: 'View content of config_eslint.json'
 
 # - script: |
 #     echo '{
