@@ -183,14 +183,14 @@ steps:
 
 - task: SonarQubePrepare@4
   inputs:
-    SonarQube: 'SonarQube'
+    SonarQube: 'sonarqubedemo'
     scannerMode: 'CLI'
     configMode: 'manual'
     cliProjectKey: 'algimas'
     cliProjectName: 'algimas'
-    cliSources: '$(Pipeline.Workspace)/s' # $(Pipeline.Workspace)/s
+    cliSources: '$(Pipeline.Workspace)/s'
     extraProperties: |
-      sonar.host.url=http://20.215.134.110:9000
+      sonar.host.url=http://algis-sonarqube.polandcentral.azurecontainer.io:9000
       sonar.login=sqa_a47dbcaa65c74da4c6e22fca1ce753f0eb0308b1
 
 - task: SonarQubeAnalyze@4
