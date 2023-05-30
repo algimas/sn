@@ -226,8 +226,8 @@ steps:
     cliProjectName: 'algimas'
     cliSources: '$(Pipeline.Workspace)/s'
     extraProperties: |
-      sonar.host.url=http://algis-sonarqube.polandcentral.azurecontainer.io:9000
-      sonar.login=varrrr
+      sonar.host.url=$(sonarUrl)
+      sonar.login=$(sonarLogin)
 
 - task: SonarQubeAnalyze@4
 
