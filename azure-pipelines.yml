@@ -199,6 +199,17 @@ steps:
     hexdump -C $(Pipeline.Workspace)/sonar_qube.json
   displayName: 'View content of sonar_qube.json using hexdump'
 
+
+- pwsh: |
+    # Read the json file into a PowerShell object
+    $json = Get-Content -Path $(Pipeline.Workspace)/sonar_qube.json | ConvertFrom-Json
+    $value = $json.sonar.host.url
+    echo $value
+    # If you want to use this value in other steps, you can set it as a variable
+    echo "##vso[task.setvariable variable=sonarHostUrl]$value"
+  displayName: 'Extract value from JSON'
+
+
 - task: SonarQubePrepare@4
   inputs:
     SonarQube: 'sonarqubedemo'
