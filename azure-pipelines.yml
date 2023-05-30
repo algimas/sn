@@ -3,6 +3,8 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# Defines the trigger for the pipeline.
+# This pipeline will only run when changes are made on the master branch and in the 'global' path.
 trigger:
   branches:
     include:
@@ -11,19 +13,24 @@ trigger:
     include:
     - global/*
 
+# Specifies the pool of virtual machines to use for the pipeline.
+# In this case, we're using the latest Ubuntu VM image.
 pool:
   vmImage: ubuntu-latest
 
 steps:
 - checkout: self
-  fetchDepth: 2
+  fetchDepth: 2 # Fetches the last 2 commits.
 
 - script: |
+    # Get the list of files changed in the last commit.
     FILES=$(git diff --name-only HEAD~1 HEAD)
+    # Store the list in a pipeline variable 'changedFiles'.
     echo "##vso[task.setvariable variable=changedFiles]$FILES"
   displayName: 'Get changed files'
 
 - script: |
+    # Print the names of changed files.
     echo $(changedFiles)
   displayName: 'Display changed files'
 
