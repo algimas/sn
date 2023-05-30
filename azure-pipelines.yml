@@ -136,13 +136,11 @@ steps:
       ls -la $(Pipeline.Workspace)/s
       echo BR-#############
       cat $(Pipeline.Workspace)/config_eslint.json
-      echo BR-#############
-      cat $(Pipeline.Workspace)/s/sn_eslint_config.json
   displayName: 'List content'
 
-# - script: |
-#     cat $(Pipeline.Workspace)/config_eslint.json
-#   displayName: 'View content of config_eslint.json'
+- script: |
+    cat $(Pipeline.Workspace)/config_eslint.json
+  displayName: 'View content of config_eslint.json'
 
 - script: |
     hexdump -C $(Pipeline.Workspace)/config_eslint.json
