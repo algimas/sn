@@ -179,3 +179,22 @@ steps:
 - script: |
     cat $(hashValue).js
   displayName: 'Print final'
+
+
+- task: SonarQubePrepare@4
+  inputs:
+    SonarQube: 'SonarQube'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'algimas'
+    cliProjectName: 'algimas'
+    cliSources: '$(Pipeline.Workspace)/s' # $(Pipeline.Workspace)/s
+    extraProperties: |
+      sonar.host.url=http://algis-sonarqube.eastus.azurecontainer.io:9000
+      sonar.login=sqa_a47dbcaa65c74da4c6e22fca1ce753f0eb0308b1
+
+- task: SonarQubeAnalyze@4
+
+- task: SonarQubePublish@4
+  inputs:
+    pollingTimeoutSec: '300'
