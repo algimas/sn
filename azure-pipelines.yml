@@ -127,6 +127,7 @@ steps:
 
 
 - script: |
+    ls -la /home/vsts/work/1
     cat /home/vsts/work/1/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
