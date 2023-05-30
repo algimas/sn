@@ -181,6 +181,24 @@ steps:
   displayName: 'Print final'
 
 
+- task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
+  inputs:
+    connectedServiceName: 'snow8'
+    applicationName: 'Snow8Demo'
+    deployableName: 'TestJS'
+    exporterName: 'returnSonarQube'
+    dataFormat: 'json'
+    saveFile: true
+    fileName: 'sonar_qube.json'
+
+- script: |
+    cat -v $(Pipeline.Workspace)/sonar_qube.json
+  displayName: 'View content of sonar_qube.json'
+
+- script: |
+    hexdump -C $(Pipeline.Workspace)/sonar_qube.json
+  displayName: 'View content of sonar_qube.json using hexdump'
+
 - task: SonarQubePrepare@4
   inputs:
     SonarQube: 'sonarqubedemo'
