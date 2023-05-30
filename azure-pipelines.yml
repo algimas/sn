@@ -140,8 +140,12 @@ steps:
       cat $(Pipeline.Workspace)/s/sn_eslint_config.json
   displayName: 'List content'
 
+# - script: |
+#     cat $(Pipeline.Workspace)/config_eslint.json
+#   displayName: 'View content of config_eslint.json'
+
 - script: |
-    cat $(Pipeline.Workspace)/config_eslint.json
+    hexdump -C $(Pipeline.Workspace)/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
 # - script: |
