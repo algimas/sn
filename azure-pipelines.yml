@@ -123,21 +123,22 @@ steps:
     exporterName: 'returnAllData-now'
     dataFormat: 'json'
     saveFile: true
-#    fileName: 's/config_eslint.json'
+    fileName: 's/config_eslint.json'
 
 - task: CmdLine@2
   inputs:
     script: |
       echo Tree
       tree $(Pipeline.Workspace)
+      echo #############
+      ls -la /home/vsts/work/1
+      echo #############
+      ls -la /home/vsts/work/1/s
+  displayName: 'List content'
 
 - script: |
-    ls -la /home/vsts/work/1/s
-  displayName: 'List content of config_eslint.json'
-
-# - script: |
-#     cat config_eslint.json
-#   displayName: 'View content of config_eslint.json'
+    cat $(Pipeline.Workspace)/config_eslint.json
+  displayName: 'View content of config_eslint.json'
 
 # - script: |
 #     echo '{
