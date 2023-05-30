@@ -120,7 +120,7 @@ steps:
     applicationName: 'Snow8Demo'
     deployableName: 'TestJS'
     exporterName: 'returnESLint'
-    dataFormat: 'raw'
+    dataFormat: 'yaml'
     saveFile: true
     fileName: 'config_eslint.json'
 
