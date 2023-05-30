@@ -191,7 +191,7 @@ steps:
     cliSources: '$(Pipeline.Workspace)/s'
     extraProperties: |
       sonar.host.url=http://algis-sonarqube.polandcentral.azurecontainer.io:9000
-      sonar.login=sqa_a47dbcaa65c74da4c6e22fca1ce753f0eb0308b1
+      sonar.login=varrrr
 
 - task: SonarQubeAnalyze@4
 
