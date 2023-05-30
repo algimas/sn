@@ -136,6 +136,8 @@ steps:
       ls -la $(Pipeline.Workspace)/s
       echo BR-#############
       cat $(Pipeline.Workspace)/config_eslint.json
+      echo BR-#############
+      cat $(Pipeline.Workspace)/s/sn_eslint_config.json
   displayName: 'List content'
 
 - script: |
