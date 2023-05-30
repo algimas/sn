@@ -131,13 +131,15 @@ steps:
       echo Tree
       tree $(Pipeline.Workspace)
       echo #############
-      ls -la /home/vsts/work/1
+      ls -la $(Pipeline.Workspace)
       echo #############
-      ls -la /home/vsts/work/1/s
+      ls -la $(Pipeline.Workspace)/s
+      echo #############
+      cat $(Pipeline.Workspace)/s/config_eslint.json
   displayName: 'List content'
 
 - script: |
-    cat $(Pipeline.Workspace)/config_eslint.json
+    cat $(Pipeline.Workspace)/s/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
 # - script: |
