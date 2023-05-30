@@ -135,6 +135,10 @@ steps:
 - script: |
     ls -la /home/vsts/work/1/s
     cat /home/vsts/work/1/s/config_eslint.json
+  displayName: 'List content of config_eslint.json'
+
+- script: |
+    cat config_eslint.json
   displayName: 'View content of config_eslint.json'
 
 # - script: |
