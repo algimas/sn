@@ -139,12 +139,12 @@ steps:
   displayName: 'List content'
 
 - script: |
-    cat $(Pipeline.Workspace)/config_eslint.json
+    cat -v $(Pipeline.Workspace)/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
-- script: |
-    hexdump -C $(Pipeline.Workspace)/config_eslint.json
-  displayName: 'View content of config_eslint.json'
+# - script: |
+#     hexdump -C $(Pipeline.Workspace)/config_eslint.json
+#   displayName: 'View content of config_eslint.json'
 
 # - script: |
 #     echo '{
