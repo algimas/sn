@@ -120,20 +120,23 @@ steps:
     applicationName: 'Snow8Demo'
     deployableName: 'TestJS'
     exporterName: 'returnAllData-now'
-    snapshotName: 'TestJS-v2.dpl'
-    saveFile: true
-    fileName: 's/config_eslint.json'
+
+
+    # snapshotName: 'TestJS-v2.dpl'
+    # saveFile: true
+    # fileName: 's/config_eslint.json'
+
 
 - task: CmdLine@2
   inputs:
     script: |
       echo Tree
       tree $(Pipeline.Workspace)
-      echo #############
+      echo BR-#############
       ls -la $(Pipeline.Workspace)
-      echo #############
+      echo BR-#############
       ls -la $(Pipeline.Workspace)/s
-      echo #############
+      echo BR-#############
       cat $(Pipeline.Workspace)/s/config_eslint.json
   displayName: 'List content'
 
