@@ -130,73 +130,17 @@ steps:
     script: |
       echo Tree
       tree $(Pipeline.Workspace)
-      echo BR-#############
-      ls -la $(Pipeline.Workspace)
-      echo BR-#############
-      ls -la $(Pipeline.Workspace)/s
-      echo BR-#############
-      cat $(Pipeline.Workspace)/config_eslint.json
   displayName: 'List content'
-
-# - script: |
-#     cat -v $(Pipeline.Workspace)/config_eslint.json
-#   displayName: 'View content of config_eslint.json'
-
-# - script: |
-#     echo "File content:"
-#     iconv -f UTF-16 -t UTF-8 /home/vsts/work/1/config_eslint.json | cat -v
-#   displayName: 'Inspect File'
-
-# - script: |
-#     echo "File content:"
-#     less /home/vsts/work/1/config_eslint.json
-#   displayName: 'Inspect File-less'
 
 
 - script: |
     hexdump -C $(Pipeline.Workspace)/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
-# - script: |
-#     echo '{
-#         "env": {
-#             "browser": true,
-#             "es6": true
-#         },
-#         "globals": {
-#             "current": "readonly",
-#             "previous": "readonly",
-#             "g_scratchpad": "readonly",
-#             "gs": "readonly",
-#             "GlideRecord": "readonly",
-#             "GlideElement": "readonly",
-#             "GlideSystem": "readonly",
-#             "GlideAjax": "readonly"
-#         },
-#         "extends": "eslint:recommended",
-#         "parserOptions": {
-#             "ecmaVersion": 2015
-#         },
-#         "rules": {
-#         }
-#     }' > .eslintrc.json
-#   displayName: 'Create ESLint configuration'
-
-
 
 - script: |
     npm install eslint
   displayName: 'Install ESLint'
-
-# - script: |
-#     npx eslint script.js # this stops pipeline because of identified JS errors, problems
-#   displayName: 'ESLint Check'
-
-# npx eslint -c path_to_your_eslint_config_file script.js || true
-
-# - script: |
-#     npx eslint -c sn_eslint_config.json $(hashValue).js || true
-#   displayName: 'ESLint Check'
 
 - script: |
     npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
