@@ -168,6 +168,31 @@ steps:
     cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
   displayName: 'View content of sn_eslint_custom_rule.js'
 
+- script: |
+    echo '{
+      "name": "eslint-plugin-sn_eslint_custom_rule",
+      "version": "1.0.0",
+      "main": "index.js",
+      "dependencies": {
+        "eslint": "^8.41.0"
+      }
+    }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+  displayName: 'Create ESLint confipackage.json'
+
+- script: |
+    echo 'module.exports.rules = {
+      \'validate-query\': require(\'./lib/rules/sn_eslint_custom_rule\')
+    };
+    ' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+  displayName: 'Create ESLint index.js'
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Tree
+      tree /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+  displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
+
 
 - script: |
     npm install eslint
@@ -181,7 +206,7 @@ steps:
 #   displayName: 'ESLint Linking'
 
 - script: |
-    cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules
+    cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     npm link
     cd $(System.DefaultWorkingDirectory)
     npm link eslint-plugin-sn_eslint_custom_rule
