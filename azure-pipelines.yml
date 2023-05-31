@@ -245,17 +245,18 @@ steps:
     ls -ld /home/vsts/work/node_modules/
   displayName: 'Debugging: Directory information - LAST'
 
-
-
 - script: |
     ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     npm link
+  displayName: 'ESLint Linking-1'
+
+- script: |
     cd $(System.DefaultWorkingDirectory)
     npm link eslint-plugin-sn_eslint_custom_rule
     cd $(Pipeline.Workspace)
     npm link eslint-plugin-sn_eslint_custom_rule
-  displayName: 'ESLint Linking'
+  displayName: 'ESLint Linking-2'
 
 
 - script: |
