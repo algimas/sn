@@ -160,10 +160,12 @@ steps:
 
 
 - script: |
-    mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules
-    ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules
+    mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
   displayName: 'Make sure that required folders exists'
 
+- script: |
+    ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+  displayName: 'Just LS required folder'
 
 
 - task: CopyFiles@2
