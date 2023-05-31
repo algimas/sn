@@ -166,36 +166,41 @@ steps:
 
 - script: |
     npm install eslint
-  displayName: 'Install ESLint'
+  displayName: 'ESLint Install'
 
 #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
+
+- script: |
+    (cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules && npm link)
+    npm link eslint-plugin-sn_eslint_custom_rule
+  displayName: 'ESLint Linking'
 
 - script: |
     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
   displayName: 'ESLint Check'
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo Tree
-      tree $(Pipeline.Workspace)
-  displayName: 'List content one more time'
+# - task: CmdLine@2
+#   inputs:
+#     script: |
+#       echo Tree
+#       tree $(Pipeline.Workspace)
+#   displayName: 'List content one more time'
 
 
-- script: |
-    echo 'const path = require("path");
-    const modulePath = require.resolve("eslint");
-    const nodeModulesDir = path.dirname(modulePath);
-    console.log(nodeModulesDir);' > get_node_modules_dir.js
-    node get_node_modules_dir.js
-  displayName: 'Print Node Modules Directory'
+# - script: |
+#     echo 'const path = require("path");
+#     const modulePath = require.resolve("eslint");
+#     const nodeModulesDir = path.dirname(modulePath);
+#     console.log(nodeModulesDir);' > get_node_modules_dir.js
+#     node get_node_modules_dir.js
+#   displayName: 'Print Node Modules Directory'
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo Tree
-      tree /home/vsts/work/node_modules
-  displayName: 'List node_modules'
+# - task: CmdLine@2
+#   inputs:
+#     script: |
+#       echo Tree
+#       tree /home/vsts/work/node_modules
+#   displayName: 'List node_modules'
 
 
 
