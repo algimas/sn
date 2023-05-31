@@ -158,13 +158,20 @@ steps:
     TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/'
     OverWrite: true
 
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo $(System.DefaultWorkingDirectory)
+  displayName: 'System.DefaultWorkingDirectory'
 
 - script: |
     npm install eslint
   displayName: 'Install ESLint'
 
+#npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
+
 - script: |
-    npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
+    npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
   displayName: 'ESLint Check'
 
 - task: CmdLine@2
