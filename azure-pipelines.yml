@@ -158,6 +158,13 @@ steps:
   displayName: 'View content of config_eslint.json'
 
 
+- script: |
+    npm install eslint
+  displayName: 'ESLint Install'
+
+
+
+
 
 - script: |
     mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
@@ -184,6 +191,7 @@ steps:
     TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/'
     OverWrite: true
 
+
 - script: |
     cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
   displayName: 'View content of sn_eslint_custom_rule.js'
@@ -202,12 +210,15 @@ steps:
   displayName: 'Create ESLint package.json'
 
 
+
+
 # This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
 - script: |
     echo "module.exports.rules = {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
     echo "  'validate-query': require('./lib/rules/sn_eslint_custom_rule')" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
     echo "};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
   displayName: 'Create ESLint index.js'
+
 
 
 - task: CmdLine@2
@@ -218,9 +229,7 @@ steps:
   displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
 
 
-- script: |
-    npm install eslint
-  displayName: 'ESLint Install'
+
 
 #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
 
@@ -234,7 +243,7 @@ steps:
     ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     echo "Printing detailed information about the parent directory:"
     ls -ld /home/vsts/work/node_modules/
-  displayName: 'Debugging: Directory information2'
+  displayName: 'Debugging: Directory information - LAST'
 
 
 
