@@ -179,12 +179,13 @@ steps:
     }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
   displayName: 'Create ESLint confipackage.json'
 
+# This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
 - script: |
-    echo 'module.exports.rules = {
-      \'validate-query\': require(\'./lib/rules/sn_eslint_custom_rule\')
-    };
-    ' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+    echo "module.exports.rules = {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+    echo "  'validate-query': require('./lib/rules/sn_eslint_custom_rule')" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+    echo "};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
   displayName: 'Create ESLint index.js'
+
 
 - task: CmdLine@2
   inputs:
