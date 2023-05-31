@@ -2,7 +2,11 @@
   "parserOptions": {
     "ecmaVersion": 12
   },
+  "plugins": [
+    "sn_eslint_custom_rule"
+  ],
   "rules": {
+    "sn_eslint_custom_rule/validate-query": "error",
     "sn-no-async-await": "error",
     "sn-no-generator-functions": "error",
     "sn-no-promises": "warn",
