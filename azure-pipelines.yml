@@ -153,9 +153,9 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(System.DefaultWorkingDirectory)/s'
+    SourceFolder: '$(System.DefaultWorkingDirectory)/'
     Contents: 'sn_eslint_custom_rule.js'
-    TargetFolder: '$(System.DefaultWorkingDirectory)/'
+    TargetFolder: '$(Pipeline.Workspace)'
     OverWrite: true
 
 
