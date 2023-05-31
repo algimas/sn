@@ -209,7 +209,9 @@ steps:
     }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
   displayName: 'Create ESLint package.json'
 
-
+- script: |
+    cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+  displayName: 'View content of package.json'
 
 
 # This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
@@ -219,7 +221,9 @@ steps:
     echo "};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
   displayName: 'Create ESLint index.js'
 
-
+- script: |
+    cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+  displayName: 'View content of index.js'
 
 - task: CmdLine@2
   inputs:
