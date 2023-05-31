@@ -175,8 +175,17 @@ steps:
 
 #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
 
+# - script: |
+#     (cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules && npm link)
+#     npm link eslint-plugin-sn_eslint_custom_rule
+#   displayName: 'ESLint Linking'
+
 - script: |
-    (cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules && npm link)
+    cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules
+    npm link
+    cd $(System.DefaultWorkingDirectory)
+    npm link eslint-plugin-sn_eslint_custom_rule
+    cd $(Pipeline.Workspace)
     npm link eslint-plugin-sn_eslint_custom_rule
   displayName: 'ESLint Linking'
 
