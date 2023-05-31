@@ -151,6 +151,13 @@ steps:
     hexdump -C $(Pipeline.Workspace)/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/s'
+    Contents: 'sn_eslint_custom_rule.js'
+    TargetFolder: '$(System.DefaultWorkingDirectory)/'
+    OverWrite: true
+
 
 - script: |
     npm install eslint
