@@ -168,7 +168,9 @@ steps:
     cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
   displayName: 'View content of sn_eslint_custom_rule.js'
 
+# it has just in case folder creation if missing, could be skipped
 - script: |
+    mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     echo '{
       "name": "eslint-plugin-sn_eslint_custom_rule",
       "version": "1.0.0",
@@ -177,7 +179,8 @@ steps:
         "eslint": "^8.41.0"
       }
     }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
-  displayName: 'Create ESLint confipackage.json'
+  displayName: 'Create ESLint package.json'
+
 
 # This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
 - script: |
