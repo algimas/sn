@@ -209,7 +209,9 @@ steps:
 #     npm link eslint-plugin-sn_eslint_custom_rule
 #   displayName: 'ESLint Linking'
 
+
 - script: |
+    ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     npm link
     cd $(System.DefaultWorkingDirectory)
@@ -217,6 +219,7 @@ steps:
     cd $(Pipeline.Workspace)
     npm link eslint-plugin-sn_eslint_custom_rule
   displayName: 'ESLint Linking'
+
 
 - script: |
     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
@@ -244,6 +247,14 @@ steps:
 #       echo Tree
 #       tree /home/vsts/work/node_modules
 #   displayName: 'List node_modules'
+
+
+
+- script: |
+    exit 1
+  displayName: 'TMP STOP'
+
+
 
 
 
