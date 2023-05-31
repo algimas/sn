@@ -157,6 +157,15 @@ steps:
     hexdump -C $(Pipeline.Workspace)/config_eslint.json
   displayName: 'View content of config_eslint.json'
 
+
+
+- script: |
+    mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules
+    ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules
+  displayName: 'Make sure that required folders exists'
+
+
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)/'
