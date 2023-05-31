@@ -168,6 +168,15 @@ steps:
   displayName: 'Just LS required folder'
 
 
+- script: |
+    echo "Printing detailed information about the directory:"
+    ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    echo "Printing detailed information about the parent directory:"
+    ls -ld /home/vsts/work/node_modules/
+  displayName: 'Debugging: Directory information1'
+
+
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)/'
@@ -219,6 +228,14 @@ steps:
 #     (cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules && npm link)
 #     npm link eslint-plugin-sn_eslint_custom_rule
 #   displayName: 'ESLint Linking'
+
+- script: |
+    echo "Printing detailed information about the directory:"
+    ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    echo "Printing detailed information about the parent directory:"
+    ls -ld /home/vsts/work/node_modules/
+  displayName: 'Debugging: Directory information2'
+
 
 
 - script: |
