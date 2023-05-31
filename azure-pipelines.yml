@@ -183,6 +183,14 @@ steps:
     node get_node_modules_dir.js
   displayName: 'Print Node Modules Directory'
 
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Tree
+      tree /home/vsts/work/node_modules
+  displayName: 'List node_modules'
+
+
 
 - script: |
     npm install prettier
