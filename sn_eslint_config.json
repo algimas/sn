@@ -6,7 +6,7 @@
     "sn_eslint_custom_rule"
   ],
   "rules": {
-    "validate-query": "error",
+    "sn_eslint_custom_rule": "error",
     "sn-no-async-await": "error",
     "sn-no-generator-functions": "error",
     "sn-no-promises": "warn",
