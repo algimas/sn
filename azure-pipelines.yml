@@ -167,6 +167,13 @@ steps:
     npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
   displayName: 'ESLint Check'
 
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Tree
+      tree $(Pipeline.Workspace)
+  displayName: 'List content one more time'
+
 - script: |
     npm install prettier
   displayName: 'Install Prettier'
