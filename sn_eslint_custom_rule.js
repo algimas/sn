@@ -1,6 +1,6 @@
 // custom-rules.js
 module.exports = {
-  "validate-query": {
+  "sn_eslint_custom_rule": {
     create: function(context) {
       let glideRecord = false;
       let addEncodedQueryCalled = false;
