@@ -20,8 +20,9 @@ pool:
 
 steps:
 - checkout: self
-  fetchDepth: 2 # Fetches the last 2 commits.
+  fetchDepth: 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
 
+# as of now it is working only file-by-file, meaning, the pipeline runs for every single commit containint jsut one file
 - script: |
     # Get the list of files changed in the last commit.
     FILES=$(git diff --name-only HEAD~1 HEAD)
