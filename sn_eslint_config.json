@@ -3,9 +3,14 @@
     "ecmaVersion": 12
   },
   "plugins": [
-    "sn_eslint_custom_rule"
+    "sn_eslint_custom_rule",
+    "servicenow"
   ],
   "rules": {
+    "servicenow/no-hardcoded-sysids": 1,
+    "servicenow/dont-use-gr-as-variablename": 1,
+    "servicenow/minimize-gs-log-print": 1,
+    "servicenow/no-packages-calls": 1,
     "sn_eslint_custom_rule/sn_eslint_custom_rule": "error",
     "sn-no-async-await": "error",
     "sn-no-generator-functions": "error",
