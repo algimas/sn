@@ -136,6 +136,11 @@ stages:
         convertPath: true
 
 
+- stage: ESLint
+  jobs:
+
+  - job: 'ESLint'
+    steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
@@ -318,7 +323,11 @@ stages:
     #       tree /home/vsts/work/node_modules
     #   displayName: 'List node_modules'
 
+- stage: Prettier
+  jobs:
 
+  - job: 'Prettier'
+    steps:
 
     - script: |
         exit 1
@@ -349,6 +358,12 @@ stages:
       displayName: 'Print final'
 
 
+
+- stage: SonarQube
+  jobs:
+
+  - job: 'SonarQube'
+    steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
