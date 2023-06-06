@@ -308,7 +308,7 @@ stages:
         method: 'POST'
         body: |
           {
-            "result": "$(setVarStep.eslintResult)"
+            "result": "$(Agent.JobStatus)"
           }
         urlSuffix: '/api/65300/devsecops'
         waitForCompletion: 'false'
