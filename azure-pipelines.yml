@@ -286,15 +286,21 @@ stages:
 
 
 
+- stage: ESLintResults
+  jobs:
 
-    # - task: InvokeRESTAPI@1
-    #   inputs:
-    #     connectionType: 'connectedServiceName'
-    #     serviceConnection: 'oprisk8generic'
-    #     method: 'POST'
-    #     body: '{"var1":"value1"}'
-    #     urlSuffix: 'api/now/call'
-    #     waitForCompletion: 'false'
+  - job: 'ESLintResults'
+    pool: server
+    steps:
+
+    - task: InvokeRESTAPI@1
+      inputs:
+        connectionType: 'connectedServiceName'
+        serviceConnection: 'oprisk8generic'
+        method: 'POST'
+        body: '{"var1":"value1"}'
+        urlSuffix: 'api/now/call'
+        waitForCompletion: 'false'
 
 
 
