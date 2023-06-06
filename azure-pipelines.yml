@@ -164,7 +164,9 @@ steps:
   displayName: 'ESLint Install'
 
 
-
+- script: |
+    npm install eslint-plugin-servicenow
+  displayName: 'ESLint Install eslint-plugin-servicenow'
 
 
 - script: |
