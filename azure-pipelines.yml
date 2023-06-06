@@ -20,10 +20,10 @@ trigger:
 
 
 stages:
-- stage: DevOpsConfig
+- stage: Preparation
   jobs:
 
-  - job: 'DevOpsConfig'
+  - job: 'Preparation'
 
     steps:
     - checkout: self
@@ -136,11 +136,11 @@ stages:
         convertPath: true
 
 
-- stage: ESLint
-  jobs:
+# - stage: ESLint
+#   jobs:
 
-  - job: 'ESLint'
-    steps:
+#   - job: 'ESLint'
+#     steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
