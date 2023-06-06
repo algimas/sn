@@ -303,7 +303,7 @@ stages:
         connectionType: 'connectedServiceName'
         serviceConnection: 'oprisk8generic'
         method: 'POST'
-        body: '$(setVarStep.eslintResult)'
+        body: $(setVarStep.eslintResult)
         urlSuffix: '/api/65300/devsecops'
         waitForCompletion: 'false'
 
