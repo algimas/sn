@@ -273,13 +273,16 @@ steps:
   displayName: 'ESLint Check'
 
 
+
 - task: InvokeRESTAPI@1
   inputs:
     connectionType: 'connectedServiceName'
     serviceConnection: 'oprisk8'
     method: 'POST'
     body: '{"var1":"value1"}'
+    urlSuffix: 'api/now/call'
     waitForCompletion: 'false'
+
 
 # - task: CmdLine@2
 #   inputs:
