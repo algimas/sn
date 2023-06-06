@@ -272,6 +272,15 @@ steps:
     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
   displayName: 'ESLint Check'
 
+
+- task: InvokeRESTAPI@1
+  inputs:
+    connectionType: 'connectedServiceName'
+    serviceConnection: 'operationalrisksolutionsdemo8-TempPrjAlgis-Generic Connection'
+    method: 'POST'
+    body: '{"var1":"value1"}'
+    waitForCompletion: 'false'
+
 # - task: CmdLine@2
 #   inputs:
 #     script: |
