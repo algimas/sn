@@ -281,24 +281,29 @@ stages:
 
 
     - script: |
-        npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
+        result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
+        echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
       displayName: 'ESLint Check'
+      name: setVarStep
 
-
+    # - script: |
+    #     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
+    #   displayName: 'ESLint Check'
 
 - stage: ESLintResults
+  dependsOn: Preparation
   jobs:
 
   - job: 'ESLintResults'
     pool: server
     steps:
-
+    
     - task: InvokeRESTAPI@1
       inputs:
         connectionType: 'connectedServiceName'
         serviceConnection: 'oprisk8generic'
         method: 'POST'
-        body: '{"var1":"value1"}'
+        body: '$(setVarStep.eslintResult)'
         urlSuffix: '/api/65300/devsecops'
         waitForCompletion: 'false'
 
