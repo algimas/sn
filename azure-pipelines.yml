@@ -15,381 +15,390 @@ trigger:
 
 # Specifies the pool of virtual machines to use for the pipeline.
 # In this case, we're using the latest Ubuntu VM image.
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- checkout: self
-  fetchDepth: 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
-
-# as of now it is working only file-by-file, meaning, the pipeline runs for every single commit containint jsut one file
-- script: |
-    # Get the list of files changed in the last commit.
-    FILES=$(git diff --name-only HEAD~1 HEAD)
-    # Store the list in a pipeline variable 'changedFiles'.
-    echo "##vso[task.setvariable variable=changedFiles]$FILES"
-  displayName: 'Get changed files'
-
-- script: |
-    # Print the names of changed files.
-    echo $(changedFiles)
-  displayName: 'Display changed files'
-
-- script: |
-    cat $(changedFiles)
-  displayName: 'View content of changedFiles'
-
-- script: |
-    # Check if the changed file(s) is in the 'global' directory.
-    # If so, extract the filename and directory parts, and store them as pipeline variables.
-    if [[ "$(changedFiles)" == global* ]]; then
-      echo "##vso[task.setvariable variable=startsWithGlobal]true"
-      LAST_PART=$(basename $(changedFiles))
-      echo "##vso[task.setvariable variable=lastPart]$LAST_PART"
-      FIRST_PART=${LAST_PART:0:-33}
-      echo "##vso[task.setvariable variable=firstPart]$FIRST_PART"
-    else
-      # If not, set the 'startsWithGlobal' pipeline variable to 'false' and exit the script.
-      echo "##vso[task.setvariable variable=startsWithGlobal]false"
-      exit 1
-    fi
-  displayName: 'Check if changedFiles starts with "global"'
-
-- script: |
-    # Install the lxml Python library, used for parsing XML files.
-    pip install lxml
-  displayName: 'Install lxml'
-
-- script: |
-    # Use Python to parse the XML file and extract the content inside <script> tags.
-    # The content is then hashed, stored in a pipeline variable, and written to a new .js file.
-    # The original <script> tag in the XML file is replaced with the hash value.
-    python -c "
-    import lxml.etree as ET
-    import hashlib
-
-    def remove_cdata_tags(text):
-        return text.replace('<![CDATA[', '').replace(']]>', '')
-
-    def hash_content(content):
-        return hashlib.sha256(content.encode()).hexdigest()
-
-    parser = ET.XMLParser(remove_blank_text=True)
-    tree = ET.parse('$(changedFiles)', parser)
-    root = tree.getroot()
-
-    for script in root.iter('script'):
-        cdata = script.text  # get CDATA content
-        if cdata:
-            # print(cdata)
-            cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
-            print(cdata_content)
-            hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
-            script.text = hash_value  # replace the content of the script tag with the hash value
-            print(hash_value)
-            # with open('script.js', 'w') as f:
-            with open(f'{hash_value}.js', 'w') as f:
-                f.write(cdata_content + '\n')
-
-        # Set an Azure Pipelines variable with the hash value
-        print(f'##vso[task.setvariable variable=hashValue]{hash_value}')
-
-    # Write the modified XML to a new file
-    tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
-    "
-  displayName: 'Extract <script> content to script.js'
-
-
-- script: |
-    echo $(hashValue)
-  displayName: 'Print hashValue'
-
-
-- script: |
-    echo "Current Directory:"
-    pwd
-    echo "List files:"
-    ls -la
-    cat $(hashValue).js
-    cat $(lastPart)
-  displayName: 'View content of script and modified.xml'
-
-
-- task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
-#  condition: eq(variables['startsWithGlobal'], 'true')
-  inputs:
-    connectedServiceName: 'snow8'
-    applicationName: 'Snow8Demo'
-    uploadTarget: 'component'
-    configFile: '$(lastPart)'
-    namePath: '$(firstPart)'
-    dataFormat: 'xml'
-    autoValidate: true
-    autoCommit: true
-    convertPath: true
-
-
-- task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
-  inputs:
-    connectedServiceName: 'snow8'
-    applicationName: 'Snow8Demo'
-    deployableName: 'TestJS'
-    exporterName: 'returnESLint'
-    dataFormat: 'json'
-    saveFile: true
-    fileName: 'config_eslint.json'
-
-
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo Tree
-      tree $(Pipeline.Workspace)
-  displayName: 'List content'
+# pool:
+#   vmImage: ubuntu-latest
+
+
+stages:
+- stage: DevOpsConfig
+  jobs:
+
+  - job: 'DevOpsConfig'
+
+    steps:
+    - checkout: self
+      fetchDepth: 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
+
+    # as of now it is working only file-by-file, meaning, the pipeline runs for every single commit containint jsut one file
+    - script: |
+        # Get the list of files changed in the last commit.
+        FILES=$(git diff --name-only HEAD~1 HEAD)
+        # Store the list in a pipeline variable 'changedFiles'.
+        echo "##vso[task.setvariable variable=changedFiles]$FILES"
+      displayName: 'Get changed files'
+
+    - script: |
+        # Print the names of changed files.
+        echo $(changedFiles)
+      displayName: 'Display changed files'
+
+    - script: |
+        cat $(changedFiles)
+      displayName: 'View content of changedFiles'
+
+    - script: |
+        # Check if the changed file(s) is in the 'global' directory.
+        # If so, extract the filename and directory parts, and store them as pipeline variables.
+        if [[ "$(changedFiles)" == global* ]]; then
+          echo "##vso[task.setvariable variable=startsWithGlobal]true"
+          LAST_PART=$(basename $(changedFiles))
+          echo "##vso[task.setvariable variable=lastPart]$LAST_PART"
+          FIRST_PART=${LAST_PART:0:-33}
+          echo "##vso[task.setvariable variable=firstPart]$FIRST_PART"
+        else
+          # If not, set the 'startsWithGlobal' pipeline variable to 'false' and exit the script.
+          echo "##vso[task.setvariable variable=startsWithGlobal]false"
+          exit 1
+        fi
+      displayName: 'Check if changedFiles starts with "global"'
+
+    - script: |
+        # Install the lxml Python library, used for parsing XML files.
+        pip install lxml
+      displayName: 'Install lxml'
+
+    - script: |
+        # Use Python to parse the XML file and extract the content inside <script> tags.
+        # The content is then hashed, stored in a pipeline variable, and written to a new .js file.
+        # The original <script> tag in the XML file is replaced with the hash value.
+        python -c "
+        import lxml.etree as ET
+        import hashlib
+
+        def remove_cdata_tags(text):
+            return text.replace('<![CDATA[', '').replace(']]>', '')
+
+        def hash_content(content):
+            return hashlib.sha256(content.encode()).hexdigest()
+
+        parser = ET.XMLParser(remove_blank_text=True)
+        tree = ET.parse('$(changedFiles)', parser)
+        root = tree.getroot()
+
+        for script in root.iter('script'):
+            cdata = script.text  # get CDATA content
+            if cdata:
+                # print(cdata)
+                cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
+                print(cdata_content)
+                hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
+                script.text = hash_value  # replace the content of the script tag with the hash value
+                print(hash_value)
+                # with open('script.js', 'w') as f:
+                with open(f'{hash_value}.js', 'w') as f:
+                    f.write(cdata_content + '\n')
+
+            # Set an Azure Pipelines variable with the hash value
+            print(f'##vso[task.setvariable variable=hashValue]{hash_value}')
+
+        # Write the modified XML to a new file
+        tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
+        "
+      displayName: 'Extract <script> content to script.js'
+
+
+    - script: |
+        echo $(hashValue)
+      displayName: 'Print hashValue'
+
+
+    - script: |
+        echo "Current Directory:"
+        pwd
+        echo "List files:"
+        ls -la
+        cat $(hashValue).js
+        cat $(lastPart)
+      displayName: 'View content of script and modified.xml'
+
+
+    - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+    #  condition: eq(variables['startsWithGlobal'], 'true')
+      inputs:
+        connectedServiceName: 'snow8'
+        applicationName: 'Snow8Demo'
+        uploadTarget: 'component'
+        configFile: '$(lastPart)'
+        namePath: '$(firstPart)'
+        dataFormat: 'xml'
+        autoValidate: true
+        autoCommit: true
+        convertPath: true
+
+
+    - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
+      inputs:
+        connectedServiceName: 'snow8'
+        applicationName: 'Snow8Demo'
+        deployableName: 'TestJS'
+        exporterName: 'returnESLint'
+        dataFormat: 'json'
+        saveFile: true
+        fileName: 'config_eslint.json'
+
+
+    - task: CmdLine@2
+      inputs:
+        script: |
+          echo Tree
+          tree $(Pipeline.Workspace)
+      displayName: 'List content'
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo $(System.DefaultWorkingDirectory)
-  displayName: 'System.DefaultWorkingDirectory'
-
-
-- script: |
-    hexdump -C $(Pipeline.Workspace)/config_eslint.json
-  displayName: 'View content of config_eslint.json'
-
-
-- script: |
-    npm install eslint
-  displayName: 'ESLint Install'
-
-
-- script: |
-    npm install eslint-plugin-servicenow
-  displayName: 'ESLint Install eslint-plugin-servicenow'
-
-
-- script: |
-    mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-  displayName: 'Make sure that required folders exists'
-
-- script: |
-    ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-  displayName: 'Just LS required folder'
+    - task: CmdLine@2
+      inputs:
+        script: |
+          echo $(System.DefaultWorkingDirectory)
+      displayName: 'System.DefaultWorkingDirectory'
 
+
+    - script: |
+        hexdump -C $(Pipeline.Workspace)/config_eslint.json
+      displayName: 'View content of config_eslint.json'
+
+
+    - script: |
+        npm install eslint
+      displayName: 'ESLint Install'
+
+
+    - script: |
+        npm install eslint-plugin-servicenow
+      displayName: 'ESLint Install eslint-plugin-servicenow'
+
 
-- script: |
-    echo "Printing detailed information about the directory:"
-    ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-    echo "Printing detailed information about the parent directory:"
-    ls -ld /home/vsts/work/node_modules/
-  displayName: 'Debugging: Directory information1'
+    - script: |
+        mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+      displayName: 'Make sure that required folders exists'
 
+    - script: |
+        ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+      displayName: 'Just LS required folder'
 
 
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(System.DefaultWorkingDirectory)/'
-    Contents: 'sn_eslint_custom_rule.js'
-    TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/'
-    OverWrite: true
+    - script: |
+        echo "Printing detailed information about the directory:"
+        ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        echo "Printing detailed information about the parent directory:"
+        ls -ld /home/vsts/work/node_modules/
+      displayName: 'Debugging: Directory information1'
 
 
-- script: |
-    cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
-  displayName: 'View content of sn_eslint_custom_rule.js'
 
-# it has just in case folder creation if missing, could be skipped
-- script: |
-    mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-    echo '{
-      "name": "eslint-plugin-sn_eslint_custom_rule",
-      "version": "1.0.0",
-      "main": "index.js",
-      "dependencies": {
-        "eslint": "^8.41.0"
-      }
-    }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
-  displayName: 'Create ESLint package.json'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/'
+        Contents: 'sn_eslint_custom_rule.js'
+        TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/'
+        OverWrite: true
 
-- script: |
-    cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
-  displayName: 'View content of package.json'
 
+    - script: |
+        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
+      displayName: 'View content of sn_eslint_custom_rule.js'
 
-# This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
-# - script: |
-#     echo "module.exports.rules = {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-#     echo "  'validate-query': require('./lib/rules/sn_eslint_custom_rule')" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-#     echo "};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-#   displayName: 'Create ESLint index.js'
+    # it has just in case folder creation if missing, could be skipped
+    - script: |
+        mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        echo '{
+          "name": "eslint-plugin-sn_eslint_custom_rule",
+          "version": "1.0.0",
+          "main": "index.js",
+          "dependencies": {
+            "eslint": "^8.41.0"
+          }
+        }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+      displayName: 'Create ESLint package.json'
 
-- script: |
-    echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-    echo "'sn_eslint_custom_rule': require('./lib/rules/sn_eslint_custom_rule')}};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-  displayName: 'Create ESLint index.js'
+    - script: |
+        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+      displayName: 'View content of package.json'
 
-- script: |
-    cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-  displayName: 'View content of index.js'
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo Tree
-      tree /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-  displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
+    # This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
+    # - script: |
+    #     echo "module.exports.rules = {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+    #     echo "  'validate-query': require('./lib/rules/sn_eslint_custom_rule')" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+    #     echo "};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+    #   displayName: 'Create ESLint index.js'
 
+    - script: |
+        echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+        echo "'sn_eslint_custom_rule': require('./lib/rules/sn_eslint_custom_rule')}};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+      displayName: 'Create ESLint index.js'
 
+    - script: |
+        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+      displayName: 'View content of index.js'
 
+    - task: CmdLine@2
+      inputs:
+        script: |
+          echo Tree
+          tree /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+      displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
 
-#npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
 
-# - script: |
-#     (cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules && npm link)
-#     npm link eslint-plugin-sn_eslint_custom_rule
-#   displayName: 'ESLint Linking'
 
-- script: |
-    echo "Printing detailed information about the directory:"
-    ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-    echo "Printing detailed information about the parent directory:"
-    ls -ld /home/vsts/work/node_modules/
-  displayName: 'Debugging: Directory information - LAST'
 
-- script: |
-    ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-    cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-    npm link
-  displayName: 'ESLint Linking-1'
+    #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
 
-# - script: |
-#     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-#   displayName: 'ESLint Linking-2'
+    # - script: |
+    #     (cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules && npm link)
+    #     npm link eslint-plugin-sn_eslint_custom_rule
+    #   displayName: 'ESLint Linking'
 
+    - script: |
+        echo "Printing detailed information about the directory:"
+        ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        echo "Printing detailed information about the parent directory:"
+        ls -ld /home/vsts/work/node_modules/
+      displayName: 'Debugging: Directory information - LAST'
 
-- script: |
-    npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
-  displayName: 'ESLint Check'
+    - script: |
+        ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        npm link
+      displayName: 'ESLint Linking-1'
 
+    # - script: |
+    #     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    #   displayName: 'ESLint Linking-2'
 
 
-- task: InvokeRESTAPI@1
-  inputs:
-    connectionType: 'connectedServiceName'
-    serviceConnection: 'oprisk8'
-    method: 'POST'
-    body: '{"var1":"value1"}'
-    urlSuffix: 'api/now/call'
-    waitForCompletion: 'false'
+    - script: |
+        npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
+      displayName: 'ESLint Check'
 
 
 
 
-# - task: CmdLine@2
-#   inputs:
-#     script: |
-#       echo Tree
-#       tree $(Pipeline.Workspace)
-#   displayName: 'List content one more time'
+    # - task: InvokeRESTAPI@1
+    #   inputs:
+    #     connectionType: 'connectedServiceName'
+    #     serviceConnection: 'oprisk8generic'
+    #     method: 'POST'
+    #     body: '{"var1":"value1"}'
+    #     urlSuffix: 'api/now/call'
+    #     waitForCompletion: 'false'
 
 
-# - script: |
-#     echo 'const path = require("path");
-#     const modulePath = require.resolve("eslint");
-#     const nodeModulesDir = path.dirname(modulePath);
-#     console.log(nodeModulesDir);' > get_node_modules_dir.js
-#     node get_node_modules_dir.js
-#   displayName: 'Print Node Modules Directory'
 
-# - task: CmdLine@2
-#   inputs:
-#     script: |
-#       echo Tree
-#       tree /home/vsts/work/node_modules
-#   displayName: 'List node_modules'
 
 
+    # - task: CmdLine@2
+    #   inputs:
+    #     script: |
+    #       echo Tree
+    #       tree $(Pipeline.Workspace)
+    #   displayName: 'List content one more time'
 
-- script: |
-    exit 1
-  displayName: 'TMP STOP'
 
+    # - script: |
+    #     echo 'const path = require("path");
+    #     const modulePath = require.resolve("eslint");
+    #     const nodeModulesDir = path.dirname(modulePath);
+    #     console.log(nodeModulesDir);' > get_node_modules_dir.js
+    #     node get_node_modules_dir.js
+    #   displayName: 'Print Node Modules Directory'
 
+    # - task: CmdLine@2
+    #   inputs:
+    #     script: |
+    #       echo Tree
+    #       tree /home/vsts/work/node_modules
+    #   displayName: 'List node_modules'
 
 
 
-- script: |
-    npm install prettier
-  displayName: 'Install Prettier'
+    - script: |
+        exit 1
+      displayName: 'TMP STOP'
 
-# - script: |
-#     npx prettier --check $(hashValue).js
-#   displayName: 'Prettier Code Formatting'
 
-- script: |
-    npx prettier $(hashValue).js
-  displayName: 'Prettier Code Formatting'
 
-- script: |
-    npx prettier --write $(hashValue).js
-  displayName: 'Prettier Code Formatting'
 
-- script: |
-    cat $(hashValue).js
-  displayName: 'Print final'
 
+    - script: |
+        npm install prettier
+      displayName: 'Install Prettier'
 
-- task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
-  inputs:
-    connectedServiceName: 'snow8'
-    applicationName: 'Snow8Demo'
-    deployableName: 'TestJS'
-    exporterName: 'returnSonarQube'
-    dataFormat: 'json'
-    saveFile: true
-    fileName: 'sonar_qube.json'
+    # - script: |
+    #     npx prettier --check $(hashValue).js
+    #   displayName: 'Prettier Code Formatting'
 
-- script: |
-    cat -v $(Pipeline.Workspace)/sonar_qube.json
-  displayName: 'View content of sonar_qube.json'
+    - script: |
+        npx prettier $(hashValue).js
+      displayName: 'Prettier Code Formatting'
 
-- script: |
-    hexdump -C $(Pipeline.Workspace)/sonar_qube.json
-  displayName: 'View content of sonar_qube.json using hexdump'
+    - script: |
+        npx prettier --write $(hashValue).js
+      displayName: 'Prettier Code Formatting'
 
+    - script: |
+        cat $(hashValue).js
+      displayName: 'Print final'
 
 
-- pwsh: |
-    # Read the json file into a PowerShell object
-    $json = Get-Content -Path $(Pipeline.Workspace)/sonar_qube.json | ConvertFrom-Json
-    # Extract the value of the keys 'sonar.host.url' and 'sonar.login'
-    $url = $json.'sonar.host.url'
-    $login = $json.'sonar.login'
-    # Print the values to the console
-    echo $url
-    echo $login
-    # If you want to use these values in other steps, you can set them as variables
-    echo "##vso[task.setvariable variable=sonarUrl]$url"
-    echo "##vso[task.setvariable variable=sonarLogin]$login"
-  displayName: 'Extract values from JSON'
+    - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
+      inputs:
+        connectedServiceName: 'snow8'
+        applicationName: 'Snow8Demo'
+        deployableName: 'TestJS'
+        exporterName: 'returnSonarQube'
+        dataFormat: 'json'
+        saveFile: true
+        fileName: 'sonar_qube.json'
 
+    - script: |
+        cat -v $(Pipeline.Workspace)/sonar_qube.json
+      displayName: 'View content of sonar_qube.json'
 
+    - script: |
+        hexdump -C $(Pipeline.Workspace)/sonar_qube.json
+      displayName: 'View content of sonar_qube.json using hexdump'
 
-- task: SonarQubePrepare@4
-  inputs:
-    SonarQube: 'sonarqubedemo'
-    scannerMode: 'CLI'
-    configMode: 'manual'
-    cliProjectKey: 'algimas'
-    cliProjectName: 'algimas'
-    cliSources: '$(Pipeline.Workspace)/s'
-    extraProperties: |
-      sonar.host.url=$(sonarUrl)
-      sonar.login=$(sonarLogin)
 
-- task: SonarQubeAnalyze@4
 
-- task: SonarQubePublish@4
-  inputs:
-    pollingTimeoutSec: '300'
+    - pwsh: |
+        # Read the json file into a PowerShell object
+        $json = Get-Content -Path $(Pipeline.Workspace)/sonar_qube.json | ConvertFrom-Json
+        # Extract the value of the keys 'sonar.host.url' and 'sonar.login'
+        $url = $json.'sonar.host.url'
+        $login = $json.'sonar.login'
+        # Print the values to the console
+        echo $url
+        echo $login
+        # If you want to use these values in other steps, you can set them as variables
+        echo "##vso[task.setvariable variable=sonarUrl]$url"
+        echo "##vso[task.setvariable variable=sonarLogin]$login"
+      displayName: 'Extract values from JSON'
+
+
+
+    - task: SonarQubePrepare@4
+      inputs:
+        SonarQube: 'sonarqubedemo'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'algimas'
+        cliProjectName: 'algimas'
+        cliSources: '$(Pipeline.Workspace)/s'
+        extraProperties: |
+          sonar.host.url=$(sonarUrl)
+          sonar.login=$(sonarLogin)
+
+    - task: SonarQubeAnalyze@4
+
+    - task: SonarQubePublish@4
+      inputs:
+        pollingTimeoutSec: '300'
