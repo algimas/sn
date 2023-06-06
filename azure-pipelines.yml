@@ -299,7 +299,7 @@ stages:
         serviceConnection: 'oprisk8generic'
         method: 'POST'
         body: '{"var1":"value1"}'
-        urlSuffix: 'api/now/call'
+        urlSuffix: '/api/65300/devsecops'
         waitForCompletion: 'false'
 
 
