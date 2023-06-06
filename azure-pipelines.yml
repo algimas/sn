@@ -279,12 +279,14 @@ stages:
     #     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     #   displayName: 'ESLint Linking-2'
 
+#        echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
 
     - script: |
         result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
         echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
       displayName: 'ESLint Check'
       name: setVarStep
+
 
     # - script: |
     #     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
@@ -297,15 +299,20 @@ stages:
   - job: 'ESLintResults'
     pool: server
     steps:
-    
+
+
     - task: InvokeRESTAPI@1
       inputs:
         connectionType: 'connectedServiceName'
         serviceConnection: 'oprisk8generic'
         method: 'POST'
-        body: $(setVarStep.eslintResult)
+        body: |
+          {
+            "result": "$(setVarStep.eslintResult)"
+          }
         urlSuffix: '/api/65300/devsecops'
         waitForCompletion: 'false'
+
 
 
 
