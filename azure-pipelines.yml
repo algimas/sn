@@ -276,7 +276,7 @@ steps:
 - task: InvokeRESTAPI@1
   inputs:
     connectionType: 'connectedServiceName'
-    serviceConnection: 'operationalrisksolutionsdemo8-TempPrjAlgis-Generic Connection'
+    serviceConnection: 'oprisk8'
     method: 'POST'
     body: '{"var1":"value1"}'
     waitForCompletion: 'false'
