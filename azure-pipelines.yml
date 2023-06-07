@@ -15,8 +15,8 @@ trigger:
 
 # Specifies the pool of virtual machines to use for the pipeline.
 # In this case, we're using the latest Ubuntu VM image.
-# pool:
-#   vmImage: ubuntu-latest
+pool:
+  vmImage: ubuntu-latest
 
 
 stages:
@@ -136,11 +136,7 @@ stages:
         convertPath: true
 
 
-# - stage: ESLint
-#   jobs:
 
-#   - job: 'ESLint'
-#     steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
@@ -279,7 +275,7 @@ stages:
     #     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     #   displayName: 'ESLint Linking-2'
 
-#        echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
+
 
     - script: |
         result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
@@ -298,6 +294,8 @@ stages:
 
   - job: 'ESLintResults'
     pool: server
+    variables:
+      eslintResultFromPreparation: $[ dependencies.Preparation.outputs['setVarStep.eslintResult'] ]
     steps:
 
 
@@ -308,7 +306,7 @@ stages:
         method: 'POST'
         body: |
           {
-            "result": "$(Agent.JobStatus)"
+            "result": "$(eslintResultFromPreparation)"
           }
         urlSuffix: '/api/65300/devsecops'
         waitForCompletion: 'false'
