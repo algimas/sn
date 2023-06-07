@@ -275,32 +275,26 @@ stages:
     #     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
     #   displayName: 'ESLint Linking-2'
 
-
-
-    - script: |
-        result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
-        echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
-      displayName: 'ESLint Check'
-      name: setVarStep
-
-
     # - script: |
     #     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
     #   displayName: 'ESLint Check'
 
 
-####################################
-# - stage: ESLintResults
-#   dependsOn: Preparation
-#   jobs:
+
+
+    - script: |
+          result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
+          echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
+      displayName: 'ESLint Check'
+      name: setVarStep
+
 
   - job: 'ESLintResultsJob'
     pool: server
     dependsOn: PreparationJob
     variables:
-      eslintResultFromPreparation: $[ dependencies.Preparation.outputs['PreparationJob.setVarStep.eslintResult'] ]
+      eslintResultFromPreparation: $[ dependencies.PreparationJob.outputs['setVarStep.eslintResult'] ]
     steps:
-
     - task: InvokeRESTAPI@1
       inputs:
         connectionType: 'connectedServiceName'
