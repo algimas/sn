@@ -352,16 +352,14 @@ stages:
     #   displayName: 'Prettier Code Formatting'
 
     - script: |
-        npx prettier $(hashValue).js
-      displayName: 'Prettier Code Formatting'
+        # Runs Prettier and outputs the formatted code to a new file
+        npx prettier $(hashValue).js > $(lastPart).js
+      displayName: 'Prettier Code Formatting to new file'
+
 
     - script: |
-        npx prettier --write $(hashValue).js
-      displayName: 'Prettier Code Formatting'
-
-    - script: |
-        cat $(hashValue).js
-      displayName: 'Print final'
+        cat $(lastPart).js
+      displayName: 'Print final formatted'
 
 
 
