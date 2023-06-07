@@ -279,33 +279,17 @@ stages:
     #     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
     #   displayName: 'ESLint Check'
 
-
-
+    # - script: |
+    #     result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
+    #     echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
+    #   displayName: 'ESLint Check'
 
     - script: |
-          result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
-          echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
-      displayName: 'ESLint Check'
-      name: setVarStep
+        result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
+        curl -X POST -H "Content-Type: application/json" -d "{\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
+      displayName: 'ESLint Check and Send Results'
 
 
-  - job: 'ESLintResultsJob'
-    pool: server
-    dependsOn: PreparationJob
-    variables:
-      eslintResultFromPreparation: $[ dependencies.PreparationJob.outputs['setVarStep.eslintResult'] ]
-    steps:
-    - task: InvokeRESTAPI@1
-      inputs:
-        connectionType: 'connectedServiceName'
-        serviceConnection: 'oprisk8generic'
-        method: 'POST'
-        body: |
-          {
-            "result": "$(eslintResultFromPreparation)"
-          }
-        urlSuffix: '/api/65300/devsecops'
-        waitForCompletion: 'false'
 
 
 
