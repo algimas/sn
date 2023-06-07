@@ -57,8 +57,9 @@ stages:
     - script: |
         git checkout $(Build.SourceVersion)
         contentSHA=$(git hash-object $(changedFiles))
-        echo $contentSHA
-      displayName: 'Print the content SHA of a file'
+        echo "##vso[task.setvariable variable=contentSHA]$contentSHA"
+      displayName: 'Calculate and set the content SHA of a file'
+
 
 
     - script: |
@@ -301,7 +302,7 @@ stages:
 
     - script: |
         result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
-        curl -X POST -H "Content-Type: application/json" -d "{\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
+        curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
       displayName: 'ESLint Check and Send Results'
 
 
