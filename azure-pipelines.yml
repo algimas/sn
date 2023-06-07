@@ -46,6 +46,15 @@ stages:
         cat $(changedFiles)
       displayName: 'View content of changedFiles'
 
+    - script: echo $(Build.SourceVersion)
+      displayName: 'Print the commit SHA'
+
+
+    - script: |
+        git diff-tree --no-commit-id --name-only -r $(Build.SourceVersion)
+      displayName: 'List the files changed in the commit'
+
+
     - script: |
         # Check if the changed file(s) is in the 'global' directory.
         # If so, extract the filename and directory parts, and store them as pipeline variables.
