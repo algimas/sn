@@ -22,7 +22,7 @@ stages:
 - stage: PreparationStage
   jobs:
 
-  - job: 'SourceControlJob'
+  - job: 'PreparationJob'
 
     steps:
     - checkout: self
@@ -73,10 +73,6 @@ stages:
         fi
       displayName: 'Check if changedFiles starts with "global"'
 
-
-  - job: 'GetJavaScriptJob'
-
-    steps:
     - script: |
         # Install the lxml Python library, used for parsing XML files.
         pip install lxml
@@ -135,8 +131,7 @@ stages:
         cat $(lastPart)
       displayName: 'View content of script and ServiceNow object XML'
 
-  - job: 'Submit2DevOpsConfigJob'
-    steps:
+
     - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
     #  condition: eq(variables['startsWithGlobal'], 'true')
       inputs:
@@ -150,8 +145,7 @@ stages:
         autoCommit: true
         convertPath: true
 
-  - job: 'GetConfigFromDevOpsConfigJob'
-    steps:
+
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
@@ -162,8 +156,7 @@ stages:
         saveFile: true
         fileName: 'config_eslint.json'
 
-  - job: 'ESLintJob'
-    steps:
+
     - task: CmdLine@2
       inputs:
         script: |
