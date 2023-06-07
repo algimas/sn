@@ -23,7 +23,7 @@ stages:
 - stage: Preparation
   jobs:
 
-  - job: 'Preparation'
+  - job: 'PreparationJob'
 
     steps:
     - checkout: self
@@ -294,11 +294,10 @@ stages:
   dependsOn: Preparation
   jobs:
 
-  - job: 'ESLintResults'
+  - job: 'ESLintResultsJob'
     pool: server
-    dependsOn: Preparation
     variables:
-      eslintResultFromPreparation: $[ dependencies.Preparation.outputs['setVarStep.eslintResult'] ]
+      eslintResultFromPreparation: $[ dependencies.Preparation.outputs['PreparationJob.setVarStep.eslintResult'] ]
     steps:
 
     - task: InvokeRESTAPI@1
