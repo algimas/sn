@@ -177,11 +177,9 @@ stages:
           echo $(System.DefaultWorkingDirectory)
       displayName: 'System.DefaultWorkingDirectory'
 
-
     - script: |
         hexdump -C $(Pipeline.Workspace)/config_eslint.json
       displayName: 'View content of config_eslint.json'
-
 
     - script: |
         npm install eslint
@@ -192,7 +190,6 @@ stages:
         npm install eslint-plugin-servicenow
       displayName: 'ESLint Install eslint-plugin-servicenow'
 
-
     - script: |
         mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
       displayName: 'Make sure that required folders exists'
@@ -201,7 +198,6 @@ stages:
         ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
       displayName: 'Just LS required folder'
 
-
     - script: |
         echo "Printing detailed information about the directory:"
         ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
@@ -209,15 +205,12 @@ stages:
         ls -ld /home/vsts/work/node_modules/
       displayName: 'Debugging: Directory information1'
 
-
-
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/'
         Contents: 'sn_eslint_custom_rule.js'
         TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/'
         OverWrite: true
-
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
@@ -239,7 +232,6 @@ stages:
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
       displayName: 'View content of package.json'
-
 
     # This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
     # - script: |
@@ -263,8 +255,6 @@ stages:
           echo Tree
           tree /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
       displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
-
-
 
 
     #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
