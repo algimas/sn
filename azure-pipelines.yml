@@ -54,6 +54,12 @@ stages:
         git diff-tree --no-commit-id --name-only -r $(Build.SourceVersion)
       displayName: 'List the files changed in the commit'
 
+    - script: |
+        git checkout $(Build.SourceVersion)
+        contentSHA=$(git hash-object $(changedFiles))
+        echo $contentSHA
+      displayName: 'Print the content SHA of a file'
+
 
     - script: |
         # Check if the changed file(s) is in the 'global' directory.
