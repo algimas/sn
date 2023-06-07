@@ -18,12 +18,11 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-
 stages:
-- stage: Preparation
+- stage: PreparationStage
   jobs:
 
-  - job: 'PreparationJob'
+  - job: 'SourceControlJob'
 
     steps:
     - checkout: self
@@ -38,29 +37,25 @@ stages:
       displayName: 'Get changed files'
 
     - script: |
-        # Print the names of changed files.
         echo $(changedFiles)
-      displayName: 'Display changed files'
+      displayName: 'Print the names of changed files'
 
-    - script: |
-        cat $(changedFiles)
-      displayName: 'View content of changedFiles'
+    # - script: |
+    #     cat $(changedFiles)
+    #   displayName: 'View content of changedFiles'
 
-    - script: echo $(Build.SourceVersion)
-      displayName: 'Print the commit SHA'
+    # - script: echo $(Build.SourceVersion)
+    #   displayName: 'Print the commit SHA'
 
-
-    - script: |
-        git diff-tree --no-commit-id --name-only -r $(Build.SourceVersion)
-      displayName: 'List the files changed in the commit'
+    # - script: |
+    #     git diff-tree --no-commit-id --name-only -r $(Build.SourceVersion)
+    #   displayName: 'List the files changed in the commit'
 
     - script: |
         git checkout $(Build.SourceVersion)
         contentSHA=$(git hash-object $(changedFiles))
         echo "##vso[task.setvariable variable=contentSHA]$contentSHA"
-      displayName: 'Calculate and set the content SHA of a file'
-
-
+      displayName: 'Calculate and set the content SHA of a file same SHA is stored at ServiceNow'
 
     - script: |
         # Check if the changed file(s) is in the 'global' directory.
@@ -78,6 +73,10 @@ stages:
         fi
       displayName: 'Check if changedFiles starts with "global"'
 
+
+  - job: 'GetJavaScriptJob'
+
+    steps:
     - script: |
         # Install the lxml Python library, used for parsing XML files.
         pip install lxml
@@ -125,8 +124,7 @@ stages:
 
     - script: |
         echo $(hashValue)
-      displayName: 'Print hashValue'
-
+      displayName: 'Print hashValue used as Unique JS file name'
 
     - script: |
         echo "Current Directory:"
@@ -135,9 +133,10 @@ stages:
         ls -la
         cat $(hashValue).js
         cat $(lastPart)
-      displayName: 'View content of script and modified.xml'
+      displayName: 'View content of script and ServiceNow object XML'
 
-
+  - job: 'Submit2DevOpsConfigJob'
+    steps:
     - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
     #  condition: eq(variables['startsWithGlobal'], 'true')
       inputs:
@@ -151,8 +150,8 @@ stages:
         autoCommit: true
         convertPath: true
 
-
-
+  - job: 'GetConfigFromDevOpsConfigJob'
+    steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
@@ -163,7 +162,8 @@ stages:
         saveFile: true
         fileName: 'config_eslint.json'
 
-
+  - job: 'ESLintJob'
+    steps:
     - task: CmdLine@2
       inputs:
         script: |
@@ -300,7 +300,7 @@ stages:
     #     echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
     #   displayName: 'ESLint Check'
 
-#         curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
+    #     curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
 
     # - script: |
     #     result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
@@ -324,9 +324,6 @@ stages:
         result_base64=$(echo "$result" | base64 | tr -d '\n')
         curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result_base64\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
       displayName: 'ESLint Check and Send Results'
-
-
-
 
     # - task: CmdLine@2
     #   inputs:
