@@ -290,12 +290,13 @@ stages:
 
 
 ####################################
-- stage: ESLintResults
-  dependsOn: Preparation
-  jobs:
+# - stage: ESLintResults
+#   dependsOn: Preparation
+#   jobs:
 
   - job: 'ESLintResultsJob'
     pool: server
+    dependsOn: PreparationJob
     variables:
       eslintResultFromPreparation: $[ dependencies.Preparation.outputs['PreparationJob.setVarStep.eslintResult'] ]
     steps:
