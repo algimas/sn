@@ -406,13 +406,14 @@ stages:
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
         git config --global user.name "$(Build.RequestedFor)"
-        git checkout "$(Build.SourceBranchName)"
+        currentBranch=$(git rev-parse --abbrev-ref HEAD)
         git add $(lastPart).js
         git commit -m "Prettier formatting applied"
-        git push https://$(githubToken)@github.com/$(Build.Repository.Name).git "$(Build.SourceBranchName)"
+        git push https://$(githubToken)@github.com/$(Build.Repository.Name).git "$currentBranch"
       displayName: 'Commit and push Prettier result'
       env:
         githubToken: $(sonarLogin)
+
 
 
     - script: |
