@@ -76,7 +76,7 @@ stages:
     - script: |
         # Install the lxml Python library, used for parsing XML files.
         pip install lxml
-      displayName: 'Install lxml'
+      displayName: 'Install lxml used for parsing JS from XML file'
 
     - script: |
         # Use Python to parse the XML file and extract the content inside <script> tags.
@@ -115,14 +115,15 @@ stages:
         # Write the modified XML to a new file
         tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
         "
-      displayName: 'Extract <script> content to script.js'
+      displayName: 'Extract <script> content from XML to dedicated JS file'
 
+    # - script: |
+    #     echo $(hashValue)
+    #   displayName: 'Print hashValue used as Unique JS file name'
 
     - script: |
+        echo "Print hashValue used as Unique JS file name:"
         echo $(hashValue)
-      displayName: 'Print hashValue used as Unique JS file name'
-
-    - script: |
         echo "Current Directory:"
         pwd
         echo "List files:"
@@ -167,6 +168,7 @@ stages:
     - task: CmdLine@2
       inputs:
         script: |
+          echo "View System.DefaultWorkingDirectory that should be: /home/vsts/work/1/s"
           echo $(System.DefaultWorkingDirectory)
       displayName: 'System.DefaultWorkingDirectory'
 
@@ -177,7 +179,6 @@ stages:
     - script: |
         npm install eslint
       displayName: 'ESLint Install'
-
 
     - script: |
         npm install eslint-plugin-servicenow
@@ -303,7 +304,7 @@ stages:
 
 
     - script: |
-        result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js 2>&1 || true)
+        result=$(npx eslint -c $(System.DefaultWorkingDirectory)/sn_eslint_config.json $(hashValue).js 2>&1 || true)
         result_base64=$(echo "$result" | base64 | tr -d '\n')
         curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result_base64\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
       displayName: 'ESLint Check and Send Results'
