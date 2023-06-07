@@ -288,16 +288,18 @@ stages:
     #     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
     #   displayName: 'ESLint Check'
 
+
+####################################
 - stage: ESLintResults
   dependsOn: Preparation
   jobs:
 
   - job: 'ESLintResults'
     pool: server
+    dependsOn: Preparation
     variables:
       eslintResultFromPreparation: $[ dependencies.Preparation.outputs['setVarStep.eslintResult'] ]
     steps:
-
 
     - task: InvokeRESTAPI@1
       inputs:
