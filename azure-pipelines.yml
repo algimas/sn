@@ -338,12 +338,9 @@ stages:
   - job: 'Prettier'
     steps:
 
-    - script: |
-        exit 1
-      displayName: 'TMP STOP'
-
-
-
+    # - script: |
+    #     exit 1
+    #   displayName: 'TMP STOP'
 
 
     - script: |
