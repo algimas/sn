@@ -332,11 +332,11 @@ stages:
     #       tree /home/vsts/work/node_modules
     #   displayName: 'List node_modules'
 
-- stage: Prettier
-  jobs:
+# - stage: Prettier
+#   jobs:
 
-  - job: 'Prettier'
-    steps:
+#   - job: 'Prettier'
+#     steps:
 
     # - script: |
     #     exit 1
@@ -365,11 +365,11 @@ stages:
 
 
 
-- stage: SonarQube
-  jobs:
+# - stage: SonarQube
+#   jobs:
 
-  - job: 'SonarQube'
-    steps:
+#   - job: 'SonarQube'
+#     steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
@@ -404,7 +404,9 @@ stages:
         echo "##vso[task.setvariable variable=sonarLogin]$login"
       displayName: 'Extract values from JSON'
 
-
+    - script: |
+        exit 1
+      displayName: 'TMP STOP'
 
     - task: SonarQubePrepare@4
       inputs:
