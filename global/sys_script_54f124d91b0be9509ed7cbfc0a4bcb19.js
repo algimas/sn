@@ -36,6 +36,7 @@
         if (current.resolution_reason)
             current.work_notes = gs.getMessage("Additional information: {0}", current.resolution_reason);
     */
+  var gr = new GlideRecord("change_request");
 
   var hardCodedSysId = "54f124d91b0be9509ed7cbfc0a4bcb19";
 
@@ -50,4 +51,4 @@
     inc.setValue("work_notes", "Some text");
     inc.update();
   }
-})(current, previous); //// 2023-06-09 13:06:54
+})(current, previous); //// 2023-06-09 13:06:54// 2023-06-09 13:12:25
