@@ -431,10 +431,9 @@ stages:
         git checkout -b prettier-result
         git add $(lastPart).js
         git commit -m "Prettier formatting applied"
-        git push origin prettier-result
+        git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git prettier-result
       displayName: 'Commit and push Prettier result'
-      env:
-        githubToken: $(sonarLogin)
+
 
 
 
