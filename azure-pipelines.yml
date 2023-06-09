@@ -273,40 +273,11 @@ stages:
         npm link
       displayName: 'ESLint Linking'
 
-    # - script: |
-    #     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-    #   displayName: 'ESLint Linking-2'
 
-    # - script: |
-    #     npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true
-    #   displayName: 'ESLint Check'
-
-    # - script: |
-    #     result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
-    #     echo "##vso[task.setvariable variable=eslintResult;isOutput=true]$result"
-    #   displayName: 'ESLint Check'
-
-    #     curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
-
-    # - script: |
-    #     result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true)
-    #     curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
-    #   displayName: 'ESLint Check and Send Results'
-
-
-    # - script: |
-    #     result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true | tr -d '\n')
-    #     curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
-    #   displayName: 'ESLint Check and Send Results'
-
-    # - script: |
-    #     result=$(npx eslint -c $(Pipeline.Workspace)/s/sn_eslint_config.json $(hashValue).js || true | base64 | tr -d '\n')
-    #     curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
-    #   displayName: 'ESLint Check and Send Results'
-
-
+    # NOTE: when taking from GIT, then use: $(System.DefaultWorkingDirectory)/sn_eslint_config.json
+    # NOTE: when taking from DevOpsConfig, then use: $(Pipeline.Workspace)/config_eslint.json
     - script: |
-        result=$(npx eslint -c $(System.DefaultWorkingDirectory)/sn_eslint_config.json $(hashValue).js 2>&1 || true)
+        result=$(npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js 2>&1 || true)
         result_base64=$(echo "$result" | base64 | tr -d '\n')
         curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result_base64\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
       displayName: 'ESLint Check and Send Results'
