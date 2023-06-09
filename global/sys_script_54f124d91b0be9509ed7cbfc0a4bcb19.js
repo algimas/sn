@@ -40,18 +40,16 @@
   gs.log(">>>test>>>print>>>from:Test-Sample-BR2-by-algis");
   var gr = new GlideRecord("change_request");
   var Base64 = Packages.org.opensaml.xml.util.Base64;
-
   var hardCodedSysId = "54f124d91b0be9509ed7cbfc0a4bcb19";
 
   var queryString = "descriptionSTARTSWITHtestttttttttttttttttttttttt";
 
   var inc = new GlideRecord("incident");
   inc.addEncodedQuery(queryString);
-  var validQueryCheck = inc.isValidEncodedQuery(queryString);
-  inc.query();
+  if (inc.isValidEncodedQuery(queryString)) inc.query();
 
   while (inc.next()) {
     inc.setValue("work_notes", "Some text");
     inc.update();
   }
-})(current, previous); //// 2023-06-09 13:06:54// 2023-06-09 13:12:25// 2023-06-09 13:18:14// 2023-06-09 13:59:50// 2023-06-09 14:19:04// 2023-06-09 14:32:37// 2023-06-09 14:40:35
+})(current, previous); //// 2023-06-09 13:06:54// 2023-06-09 13:12:25// 2023-06-09 13:18:14// 2023-06-09 13:59:50// 2023-06-09 14:19:04// 2023-06-09 14:32:37// 2023-06-09 14:40:35// 2023-06-09 14:48:53
