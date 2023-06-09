@@ -166,16 +166,17 @@ stages:
           tree $(Pipeline.Workspace)
       displayName: 'List content'
 
-    - task: CmdLine@2
-      inputs:
-        script: |
-          echo "View System.DefaultWorkingDirectory that should be: /home/vsts/work/1/s"
-          echo $(System.DefaultWorkingDirectory)
-      displayName: 'System.DefaultWorkingDirectory'
+    # - task: CmdLine@2
+    #   inputs:
+    #     script: |
+    #       echo "View System.DefaultWorkingDirectory that should be: /home/vsts/work/1/s"
+    #       echo $(System.DefaultWorkingDirectory)
+    #   displayName: 'System.DefaultWorkingDirectory'
 
     - script: |
+        # echo "cat does not work that is why hexdump is being used"
         hexdump -C $(Pipeline.Workspace)/config_eslint.json
-      displayName: 'View content of config_eslint.json'
+      displayName: 'View content of DevOps Config config_eslint.json'
 
     - script: |
         npm install eslint
@@ -187,18 +188,18 @@ stages:
 
     - script: |
         mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-      displayName: 'Make sure that required folders exists'
+      displayName: 'Make sure that required folders for custom eslint rules exists'
 
-    - script: |
-        ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-      displayName: 'Just LS required folder'
+    # - script: |
+    #     ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    #   displayName: 'Just validate if created eslint folder exists'
 
-    - script: |
-        echo "Printing detailed information about the directory:"
-        ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-        echo "Printing detailed information about the parent directory:"
-        ls -ld /home/vsts/work/node_modules/
-      displayName: 'Debugging: Directory information1'
+    # - script: |
+    #     echo "Printing detailed information about the directory:"
+    #     ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    #     echo "Printing detailed information about the parent directory:"
+    #     ls -ld /home/vsts/work/node_modules/
+    #   displayName: 'Debugging - Directory information'
 
     - task: CopyFiles@2
       inputs:
