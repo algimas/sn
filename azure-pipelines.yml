@@ -34,11 +34,11 @@ stages:
         FILES=$(git diff --name-only HEAD~1 HEAD)
         # Store the list in a pipeline variable 'changedFiles'.
         echo "##vso[task.setvariable variable=changedFiles]$FILES"
-      displayName: 'Get changed files'
+      displayName: 'Get changed file (trigger)'
 
     - script: |
         echo $(changedFiles)
-      displayName: 'Print the names of changed files'
+      displayName: 'Print the names of changed file'
 
     # - script: |
     #     cat $(changedFiles)
@@ -55,7 +55,7 @@ stages:
         git checkout $(Build.SourceVersion)
         contentSHA=$(git hash-object $(changedFiles))
         echo "##vso[task.setvariable variable=contentSHA]$contentSHA"
-      displayName: 'Calculate and set the content SHA of a file same SHA is stored at ServiceNow'
+      displayName: 'Calculate and set the <content SHA>, note - same SHA is stored at ServiceNow for correlation'
 
     - script: |
         # Check if the changed file(s) is in the 'global' directory.
@@ -116,7 +116,7 @@ stages:
         # Write the modified XML to a new file
         tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
         "
-      displayName: 'Extract <script> content from XML to dedicated JS file'
+      displayName: 'Extract <script> element from XML and store as separate JS file'
 
     # - script: |
     #     echo $(hashValue)
@@ -172,7 +172,7 @@ stages:
     #   displayName: 'System.DefaultWorkingDirectory'
 
     - script: |
-        echo "cat, for viewing the file, does not work that is why hexdump is being used"
+        echo "cat - for viewing the file, does not work that is why hexdump is being used"
         hexdump -C $(Pipeline.Workspace)/config_eslint.json
       displayName: 'View DevOps Config config_eslint.json'
 
