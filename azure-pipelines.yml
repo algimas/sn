@@ -428,10 +428,10 @@ stages:
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
         git config --global user.name "$(Build.RequestedFor)"
-        git checkout -b prettier-result
+        git checkout master
         git add $(lastPart).js
         git commit -m "Prettier formatting applied"
-        git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git prettier-result
+        git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git master
       displayName: 'Commit and push Prettier result'
 
 
