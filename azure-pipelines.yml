@@ -177,7 +177,9 @@ stages:
         sed -i 's/##-##/\//g' $(Pipeline.Workspace)/config_eslint.json
       displayName: 'Replace strings in JSON file'
 
-
+    - script: |
+        hexdump -C $(Pipeline.Workspace)/config_eslint.json
+      displayName: 'View replaced DevOps Config config_eslint.json'
 
 
     - script: |
