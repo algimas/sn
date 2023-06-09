@@ -357,6 +357,14 @@ stages:
         npx prettier $(hashValue).js > $(lastPart).js
       displayName: 'Prettier Code Formatting to new file'
 
+    - script: |
+        # Runs Prettier and outputs the formatted code to a new file
+        npx prettier $(hashValue).js > $(lastPart).js
+        # Move the file to the 'global' directory
+        mv $(lastPart).js global/$(lastPart).js
+      displayName: 'Prettier Code Formatting to new file'
+
+
 
     - script: |
         cat $(lastPart).js
