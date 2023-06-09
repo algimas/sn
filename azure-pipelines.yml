@@ -26,7 +26,7 @@ stages:
 
     steps:
     - checkout: self
-      fetchDepth: 10 # 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
+      fetchDepth: 0 # 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
 
     # as of now it is working only file-by-file, meaning, the pipeline runs for every single commit containint jsut one file
     - script: |
@@ -60,7 +60,7 @@ stages:
     - script: |
         # Check if the changed file(s) is in the 'global' directory.
         # If so, extract the filename and directory parts, and store them as pipeline variables.
-        if [[ "$(changedFiles)" == global* ]]; then
+        if [[ "$(changedFiles)" == global* ]] && [[ "$(changedFiles)" != *.js ]]; then
           echo "##vso[task.setvariable variable=startsWithGlobal]true"
           LAST_PART=$(basename $(changedFiles))
           echo "##vso[task.setvariable variable=lastPart]$LAST_PART"
@@ -71,7 +71,8 @@ stages:
           echo "##vso[task.setvariable variable=startsWithGlobal]false"
           exit 1
         fi
-      displayName: 'Check if changedFiles starts with "global"'
+      displayName: 'Check if changedFiles starts with "global" and does not end with ".js"'
+
 
     - script: |
         # Install the lxml Python library, used for parsing XML files.
