@@ -158,13 +158,11 @@ stages:
         saveFile: true
         fileName: 'config_eslint.json'
 
-
     - task: CmdLine@2
       inputs:
         script: |
-          echo Tree
           tree $(Pipeline.Workspace)
-      displayName: 'List content'
+      displayName: 'List TREE content'
 
     # - task: CmdLine@2
     #   inputs:
@@ -174,9 +172,9 @@ stages:
     #   displayName: 'System.DefaultWorkingDirectory'
 
     - script: |
-        # echo "cat does not work that is why hexdump is being used"
+        echo "cat, for viewing the file, does not work that is why hexdump is being used"
         hexdump -C $(Pipeline.Workspace)/config_eslint.json
-      displayName: 'View content of DevOps Config config_eslint.json'
+      displayName: 'View DevOps Config config_eslint.json'
 
     - script: |
         npm install eslint
@@ -186,9 +184,37 @@ stages:
         npm install eslint-plugin-servicenow
       displayName: 'ESLint Install eslint-plugin-servicenow'
 
+
     - script: |
+        echo "Folder creation, just in case if somehow is still missing, could be skipped"
         mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-      displayName: 'Make sure that required folders for custom eslint rules exists'
+        echo '{
+          "name": "eslint-plugin-sn_eslint_custom_rule",
+          "version": "1.0.0",
+          "main": "index.js",
+          "dependencies": {
+            "eslint": "^8.41.0"
+          }
+        }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+      displayName: 'Create ESLint package.json'
+
+    - script: |
+        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+      displayName: 'View content of package.json'
+
+
+
+    - script: |
+        echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+        echo "'sn_eslint_custom_rule': require('./lib/rules/sn_eslint_custom_rule')}};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+      displayName: 'Create ESLint index.js'
+
+    - script: |
+        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+      displayName: 'View content of index.js'
+
+
+
 
     # - script: |
     #     ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
@@ -212,22 +238,7 @@ stages:
         cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
       displayName: 'View content of sn_eslint_custom_rule.js'
 
-    # it has just in case folder creation if missing, could be skipped
-    - script: |
-        mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-        echo '{
-          "name": "eslint-plugin-sn_eslint_custom_rule",
-          "version": "1.0.0",
-          "main": "index.js",
-          "dependencies": {
-            "eslint": "^8.41.0"
-          }
-        }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
-      displayName: 'Create ESLint package.json'
 
-    - script: |
-        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
-      displayName: 'View content of package.json'
 
     # This script will first create (or overwrite) the index.js file with the first line, and then append the subsequent lines to the file
     # - script: |
@@ -236,19 +247,11 @@ stages:
     #     echo "};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
     #   displayName: 'Create ESLint index.js'
 
-    - script: |
-        echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-        echo "'sn_eslint_custom_rule': require('./lib/rules/sn_eslint_custom_rule')}};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-      displayName: 'Create ESLint index.js'
 
-    - script: |
-        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-      displayName: 'View content of index.js'
 
     - task: CmdLine@2
       inputs:
         script: |
-          echo Tree
           tree /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
       displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
 
