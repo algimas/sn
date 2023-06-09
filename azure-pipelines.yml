@@ -413,13 +413,25 @@ stages:
     #     git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git "$branchName"
     #   displayName: 'Commit and push Prettier result'
 
+    # - script: |
+    #     git config --global user.email "$(Build.RequestedForEmail)"
+    #     git config --global user.name "$(Build.RequestedFor)"
+    #     git checkout master
+    #     git add $(lastPart).js
+    #     git commit -m "Prettier formatting applied"
+    #     git push origin master
+    #   displayName: 'Commit and push Prettier result'
+    #   env:
+    #     githubToken: $(sonarLogin)
+
+
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
         git config --global user.name "$(Build.RequestedFor)"
-        git checkout master
+        git checkout -b prettier-result
         git add $(lastPart).js
         git commit -m "Prettier formatting applied"
-        git push origin master
+        git push origin prettier-result
       displayName: 'Commit and push Prettier result'
       env:
         githubToken: $(sonarLogin)
