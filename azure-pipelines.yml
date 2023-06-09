@@ -364,11 +364,14 @@ stages:
         mv $(lastPart).js global/$(lastPart).js
       displayName: 'Prettier Code Formatting to new file'
 
-
-
     - script: |
-        cat $(lastPart).js
-      displayName: 'Print final formatted'
+        cat global/$(lastPart).js
+      displayName: 'Print final formatted code'
+
+
+    # - script: |
+    #     cat $(lastPart).js
+    #   displayName: 'Print final formatted'
 
 
 
