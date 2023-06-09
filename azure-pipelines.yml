@@ -203,7 +203,7 @@ stages:
 
     - script: |
         echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-algis/index.js
-        echo "'algis': require('./lib/rules/algis')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
+        echo "'is-valid-encoded-query': require('./lib/rules/is-valid-encoded-query')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
       displayName: 'Create ESLint index.js'
 
     - script: |
