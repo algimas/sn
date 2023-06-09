@@ -1,4 +1,3 @@
-// 2023-05-31 16:47
 // When transit to closed, it means the group has already populated with resolution data
 // so just use the resolution data to populate the closed notes and date
 (function executeRule(current, previous /*null when async*/) {
@@ -51,4 +50,4 @@
     inc.setValue("work_notes", "Some text");
     inc.update();
   }
-})(current, previous); // // 2023-06-09 10:15:19// 2023-06-09 10:23:15// 2023-06-09 10:31:58// 2023-06-09 10:34:59// 2023-06-09 10:43:12// 2023-06-09 12:46:31
+})(current, previous); //// 2023-06-09 13:06:54
