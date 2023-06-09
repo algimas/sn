@@ -118,20 +118,17 @@ stages:
         "
       displayName: 'Extract <script> element from XML and store as separate JS file'
 
-    # - script: |
-    #     echo $(hashValue)
-    #   displayName: 'Print hashValue used as Unique JS file name'
 
-    - script: |
-        echo "Print hashValue used as Unique JS file name:"
-        echo $(hashValue)
-        echo "Current Directory:"
-        pwd
-        echo "List files:"
-        ls -la
-        cat $(hashValue).js
-        cat $(lastPart)
-      displayName: 'View content of script and ServiceNow object XML'
+    # - script: |
+    #     echo "Print hashValue used as Unique JS file name:"
+    #     echo $(hashValue)
+    #     echo "Current Directory:"
+    #     pwd
+    #     echo "List files:"
+    #     ls -la
+    #     cat $(hashValue).js
+    #     cat $(lastPart)
+    #   displayName: 'View content of script and ServiceNow object XML'
 
 
     - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
@@ -187,42 +184,42 @@ stages:
 
     - script: |
         echo "Folder creation, just in case if somehow is still missing, could be skipped"
-        mkdir -p /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        mkdir -p /home/vsts/work/node_modules/eslint-plugin-algis
         echo '{
-          "name": "eslint-plugin-sn_eslint_custom_rule",
+          "name": "eslint-plugin-algis",
           "version": "1.0.0",
           "main": "index.js",
           "dependencies": {
             "eslint": "^8.41.0"
           }
-        }' > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+        }' > /home/vsts/work/node_modules/eslint-plugin-algis/package.json
       displayName: 'Create ESLint package.json'
 
     - script: |
-        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/package.json
+        cat /home/vsts/work/node_modules/eslint-plugin-algis/package.json
       displayName: 'View content of package.json'
 
 
 
     - script: |
-        echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
-        echo "'sn_eslint_custom_rule': require('./lib/rules/sn_eslint_custom_rule')}};" >> /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+        echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-algis/index.js
+        echo "'algis': require('./lib/rules/algis')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
       displayName: 'Create ESLint index.js'
 
     - script: |
-        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/index.js
+        cat /home/vsts/work/node_modules/eslint-plugin-algis/index.js
       displayName: 'View content of index.js'
 
 
 
 
     # - script: |
-    #     ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    #     ls /home/vsts/work/node_modules/eslint-plugin-algis
     #   displayName: 'Just validate if created eslint folder exists'
 
     # - script: |
     #     echo "Printing detailed information about the directory:"
-    #     ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+    #     ls -ld /home/vsts/work/node_modules/eslint-plugin-algis
     #     echo "Printing detailed information about the parent directory:"
     #     ls -ld /home/vsts/work/node_modules/
     #   displayName: 'Debugging - Directory information'
@@ -230,13 +227,13 @@ stages:
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/'
-        Contents: 'sn_eslint_custom_rule.js'
-        TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/'
+        Contents: 'is-valid-encoded-query.js'
+        TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-algis/lib/rules/'
         OverWrite: true
 
     - script: |
-        cat /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule/lib/rules/sn_eslint_custom_rule.js
-      displayName: 'View content of sn_eslint_custom_rule.js'
+        cat /home/vsts/work/node_modules/eslint-plugin-algis/lib/rules/is-valid-encoded-query.js
+      displayName: 'View content of is-valid-encoded-query.js'
 
 
 
@@ -252,8 +249,8 @@ stages:
     - task: CmdLine@2
       inputs:
         script: |
-          tree /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-      displayName: 'List content of eslint-plugin-sn_eslint_custom_rule'
+          tree /home/vsts/work/node_modules/eslint-plugin-algis
+      displayName: 'List content of eslint-plugin-algis'
 
 
     #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
@@ -265,16 +262,16 @@ stages:
 
     - script: |
         echo "Printing detailed information about the directory:"
-        ls -ld /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        ls -ld /home/vsts/work/node_modules/eslint-plugin-algis
         echo "Printing detailed information about the parent directory:"
         ls -ld /home/vsts/work/node_modules/
       displayName: 'Debugging: Directory information - LAST'
 
     - script: |
-        ls /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
-        cd /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
+        ls /home/vsts/work/node_modules/eslint-plugin-algis
+        cd /home/vsts/work/node_modules/eslint-plugin-algis
         npm link
-      displayName: 'ESLint Linking-1'
+      displayName: 'ESLint Linking'
 
     # - script: |
     #     npm link /home/vsts/work/node_modules/eslint-plugin-sn_eslint_custom_rule
