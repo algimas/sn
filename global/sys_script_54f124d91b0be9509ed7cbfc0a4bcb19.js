@@ -36,8 +36,10 @@
         if (current.resolution_reason)
             current.work_notes = gs.getMessage("Additional information: {0}", current.resolution_reason);
     */
+
   gs.log(">>>test>>>print>>>from:Test-Sample-BR2-by-algis");
   var gr = new GlideRecord("change_request");
+  var Base64 = Packages.org.opensaml.xml.util.Base64;
 
   var hardCodedSysId = "54f124d91b0be9509ed7cbfc0a4bcb19";
 
@@ -52,4 +54,4 @@
     inc.setValue("work_notes", "Some text");
     inc.update();
   }
-})(current, previous); //// 2023-06-09 13:06:54// 2023-06-09 13:12:25// 2023-06-09 13:18:14
+})(current, previous); //// 2023-06-09 13:06:54// 2023-06-09 13:12:25// 2023-06-09 13:18:14// 2023-06-09 13:59:50
