@@ -26,7 +26,7 @@ stages:
 
     steps:
     - checkout: self
-      fetchDepth: 0 # 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
+      fetchDepth: 10 # 2 # Fetches the last 2 commits (defaults to no limit) where we need to compare only the last commits to make a decision
 
     # as of now it is working only file-by-file, meaning, the pipeline runs for every single commit containint jsut one file
     - script: |
