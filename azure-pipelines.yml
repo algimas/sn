@@ -226,7 +226,7 @@ stages:
 
     - task: CopyFiles@2
       inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)/'
+        SourceFolder: '$(System.DefaultWorkingDirectory)/eslint/'
         Contents: 'is-valid-encoded-query.js'
         TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-algis/lib/rules/'
         OverWrite: true
