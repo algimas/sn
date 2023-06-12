@@ -212,7 +212,8 @@ stages:
 
     - script: |
         echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-algis/index.js
-        echo "'is-valid-encoded-query': require('./lib/rules/is-valid-encoded-query')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
+        echo "'is-valid-encoded-query': require('./lib/rules/is-valid-encoded-query')," >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
+        echo "'no-current-update': require('./lib/rules/no-current-update')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
       displayName: 'Create ESLint index.js'
 
     - script: |
@@ -236,13 +237,13 @@ stages:
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/eslint/'
-        Contents: 'is-valid-encoded-query.js'
+        Contents: '*.js'
         TargetFolder: '/home/vsts/work/node_modules/eslint-plugin-algis/lib/rules/'
         OverWrite: true
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-algis/lib/rules/is-valid-encoded-query.js
-      displayName: 'View content of is-valid-encoded-query.js'
+      displayName: 'Just view content of is-valid-encoded-query.js'
 
 
 
