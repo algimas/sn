@@ -86,6 +86,7 @@ stages:
         python -c "
         import lxml.etree as ET
         import hashlib
+        import json
 
         def remove_cdata_tags(text):
             return text.replace('<![CDATA[', '').replace(']]>', '')
@@ -106,9 +107,21 @@ stages:
                 hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
                 script.text = hash_value  # replace the content of the script tag with the hash value
                 print(hash_value)
-                # with open('script.js', 'w') as f:
+
+                # Get sys_class_name and when from the same parent of script
+                parent = script.getparent()
+                sys_class_name = parent.findtext('sys_class_name')
+                when = parent.findtext('when')
+
+                # Store the sys_class_name and when as a comment in JSON format
+                metadata = {
+                    'sys_class_name': sys_class_name,
+                    'when': when
+                }
+                metadata_comment = '// ' + json.dumps(metadata) + '\n'
+
                 with open(f'{hash_value}.js', 'w') as f:
-                    f.write(cdata_content + '\n')
+                    f.write(metadata_comment + cdata_content + '\n')
 
             # Set an Azure Pipelines variable with the hash value
             print(f'##vso[task.setvariable variable=hashValue]{hash_value}')
@@ -116,7 +129,8 @@ stages:
         # Write the modified XML to a new file
         tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
         "
-      displayName: 'Extract <script> element from XML and store as separate JS file'
+    displayName: 'Extract <script> element from XML and store as separate JS file'
+
 
 
     # - script: |
