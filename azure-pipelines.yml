@@ -111,8 +111,10 @@ stages:
 
                 # Store the sys_class_name and when as a comment in JSON format
                 metadata = {
-                    'sys_class_name': sys_class_name,
-                    'when': when
+                    'eslint': {
+                        'sys_class_name': sys_class_name,
+                        'when': when
+                    }
                 }
                 metadata_comment = '// ' + json.dumps(metadata) + '\n'
 
@@ -126,6 +128,7 @@ stages:
         tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
         "
       displayName: 'Extract <script> element from XML and store as separate JS file'
+
 
 
 
