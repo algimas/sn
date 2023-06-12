@@ -16,31 +16,27 @@ module.exports = {
     },
 
     create: function(context) {
-        // Get the filename of the .js file being linted
         const filename = context.getFilename();
-        // Replace the .js extension with .json to get the path of the metadata file
-        const metadataFilename = filename.replace(/\.js$/, '.json');
+        const metadataFilename = process.env.ESLINT_METADATA_PATH;
+        let shouldLintFile = false;
 
-        // Read the metadata file
-        const metadataRaw = fs.readFileSync(metadataFilename, 'utf-8');
-        const metadata = JSON.parse(metadataRaw);
+        if (fs.existsSync(metadataFilename)) {
+            const metadata = JSON.parse(fs.readFileSync(metadataFilename, 'utf8'));
+            const key = Object.keys(metadata)[0]; // first key in the object
+            const sysScript = metadata[key]?.record_update?.sys_script;
 
-        // Check the metadata to determine whether to apply the rule
-        const eslintMetadata = metadata[Object.keys(metadata)[0]]["record_update"]["sys_script"];
-        const sysClassName = eslintMetadata["sys_class_name"];
-        
-        // Only apply the rule if the sys_class_name is 'sys_script'
-        if (sysClassName === 'sys_script') {
-            return {
-                MemberExpression(node) {
-                    if (node.object.name === 'current' && node.property.name === 'update') {
-                        context.report({
-                            node: node,
-                            messageId: 'avoidCurrentUpdate'
-                        });
-                    }
-                }
-            };
+            shouldLintFile = sysScript && sysScript.sys_class_name === 'sys_script' && sysScript.when === 'after';
         }
+
+        return {
+            MemberExpression(node) {
+                if (shouldLintFile && node.object.name === 'current' && node.property.name === 'update') {
+                    context.report({
+                        node: node,
+                        messageId: 'avoidCurrentUpdate'
+                    });
+                }
+            }
+        };
     }
 };
