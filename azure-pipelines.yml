@@ -80,9 +80,6 @@ stages:
       displayName: 'Install lxml used for parsing JS from XML file'
 
     - script: |
-        # Use Python to parse the XML file and extract the content inside <script> tags.
-        # The content is then hashed, stored in a pipeline variable, and written to a new .js file.
-        # The original <script> tag in the XML file is replaced with the hash value.
         python -c "
         import lxml.etree as ET
         import hashlib
@@ -101,7 +98,6 @@ stages:
         for script in root.iter('script'):
             cdata = script.text  # get CDATA content
             if cdata:
-                # print(cdata)
                 cdata_content = remove_cdata_tags(cdata)  # remove CDATA tags
                 print(cdata_content)
                 hash_value = hash_content(cdata_content)  # get SHA-256 hash of the content
@@ -129,7 +125,8 @@ stages:
         # Write the modified XML to a new file
         tree.write('$(lastPart)', pretty_print=True, xml_declaration=True, encoding='utf-8')
         "
-    displayName: 'Extract <script> element from XML and store as separate JS file'
+      displayName: 'Extract <script> element from XML and store as separate JS file'
+
 
 
 
