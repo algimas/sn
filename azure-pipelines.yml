@@ -469,9 +469,6 @@ stages:
       displayName: 'Extract values from JSON'
       name: extractFromJson
 
-
-
-
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
         git config --global user.name "$(Build.RequestedFor)"
@@ -480,9 +477,11 @@ stages:
         git add global/$(lastPart).json global/$(lastPart).js
         git status
         git commit -m "Prettier formatting applied for .js and .json"
-        repo_url="https://'"$(sonarLogin)"'@github.com/$(Build.Repository.Name).git"
-        git push $repo_url master
+        git push "https://${SONAR_LOGIN}@github.com/$(Build.Repository.Name).git" master
       displayName: 'Commit and push Prettier result'
+      env: 
+        SONAR_LOGIN: $(sonarLogin)
+
 
 
 
