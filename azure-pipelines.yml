@@ -157,7 +157,7 @@ stages:
         namePath: '$(firstPart)'
         dataFormat: 'xml'
         autoValidate: true
-        autoCommit: false
+        autoCommit: true
         convertPath: true
 
 
