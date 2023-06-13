@@ -193,6 +193,16 @@ stages:
         echo $(snapshotName)
       displayName: 'Print snapshotName'
 
+    - task: ServiceNow-DevOps-Config-Agent-Publish-Snapshot@1
+      name: DevOpsConfigPublishSnapshot
+      inputs:
+        connectedServiceName: 'snow8'
+        applicationName: 'Snow8Demo'
+        deployableName: 'TestJS'
+        snapshotName: '$(snapshotName)'
+
+
+
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
