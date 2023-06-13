@@ -376,6 +376,7 @@ stages:
         # Move the formatted JavaScript and JSON files to the 'global' directory
         mv $(lastPart).js global/$(lastPart).js
         mv $(lastPart).json global/$(lastPart).json
+        ls -al global
       displayName: 'Move formatted files to global directory'
 
     - script: |
@@ -440,6 +441,13 @@ stages:
     #   displayName: 'Commit and push Prettier result'
     #   env:
     #     githubToken: $(sonarLogin)
+
+
+    - script: |
+        ls -al global
+        cat global/$(lastPart).json
+      displayName: 'Check JSON file'
+
 
 
     - script: |
