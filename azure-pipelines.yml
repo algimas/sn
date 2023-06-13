@@ -445,9 +445,8 @@ stages:
         git config --global user.email "$(Build.RequestedForEmail)"
         git config --global user.name "$(Build.RequestedFor)"
         git checkout master
-        git add global/$(lastPart).js
-        git add global/$(lastPart).json
-        git commit -m "Prettier formatting applied"
+        git add global/$(lastPart).js global/$(lastPart).json
+        git commit -m "Prettier formatting applied for .js and .json"
         git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git master
       displayName: 'Commit and push Prettier result'
 
