@@ -464,36 +464,12 @@ stages:
         echo $url
         echo $login
         # If you want to use these values in other steps, you can set them as variables
-        echo "##vso[task.setvariable variable=sonarUrl]$url"
-        echo "##vso[task.setvariable variable=sonarLogin]$login"
+        echo "##vso[task.setvariable variable=sonarUrl;isOutput=true]$url"
+        echo "##vso[task.setvariable variable=sonarLogin;isOutput=true]$login"
       displayName: 'Extract values from JSON'
-
-    # - script: |
-    #     git config --global user.email "$(Build.RequestedForEmail)"
-    #     git config --global user.name "$(Build.RequestedFor)"
-    #     branchName=$(echo $(Build.SourceBranch) | cut -d "/" -f 3)
-    #     git checkout "$branchName"
-    #     git add $(lastPart).js
-    #     git commit -m "Prettier formatting applied"
-    #     git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git "$branchName"
-    #   displayName: 'Commit and push Prettier result'
-
-    # - script: |
-    #     git config --global user.email "$(Build.RequestedForEmail)"
-    #     git config --global user.name "$(Build.RequestedFor)"
-    #     git checkout master
-    #     git add $(lastPart).js
-    #     git commit -m "Prettier formatting applied"
-    #     git push origin master
-    #   displayName: 'Commit and push Prettier result'
-    #   env:
-    #     githubToken: $(sonarLogin)
+      name: extractFromJson
 
 
-    - script: |
-        ls -al global
-        cat global/$(lastPart).json
-      displayName: 'Check JSON file'
 
 
 
@@ -510,21 +486,21 @@ stages:
 
 
 
-
-
-    # - script: |
-    #     exit 1
-    #   displayName: 'TMP STOP'
-
   - job: 'SonarQube'
-
+    dependsOn: PreparationJob
+    variables:
+      sonarUrl: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
+      sonarLogin: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
     steps:
 
     - script: |
-        echo $url 
-        response=$(curl --connect-timeout 10 -f $url ; echo $?)
+        echo $(sonarUrl)
+        echo $(sonarLogin)
+        curl --connect-timeout 10 -f $sonarUrl 
+        response=$?
         echo "##vso[task.setvariable variable=pingresult]$response"
       displayName: 'Ping URL'
+
 
     - task: SonarQubePrepare@4
       condition: eq(variables['pingresult'], '0')
