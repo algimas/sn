@@ -148,7 +148,7 @@ stages:
 
 
     - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
-      name: snXmlUpload
+      name: DevOpsConfigXmlUpload
     #  condition: eq(variables['startsWithGlobal'], 'true')
       inputs:
         connectedServiceName: 'snow8'
@@ -163,8 +163,23 @@ stages:
 
 
     - script: |
-        echo $(snXmlUpload.changesetNumber)
-      displayName: 'Print snXmlUpload.changesetNumber'
+        echo $(DevOpsConfigXmlUpload.changesetNumber)
+      displayName: 'Print DevOpsConfigXmlUpload.changesetNumber'
+
+
+    - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+      name: DevOpsConfigGetSnapshot
+      inputs:
+        connectedServiceName: 'snow8'
+        applicationName: 'Snow8Demo'
+        deployableName: 'TestJS'
+        changeSetNumber: '$(DevOpsConfigXmlUpload.changesetNumber)'
+        isValidated: true
+
+
+    - script: |
+        echo $(DevOpsConfigGetSnapshot.snapshotName)
+      displayName: 'Print DevOpsConfigGetSnapshot.snapshotName'
 
 
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
