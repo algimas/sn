@@ -1,0 +1,443 @@
+gs.include("PrototypeServer");
+
+var AlgisDemoCopySAML2 = Class.create();
+AlgisDemoCopySAML2.prototype = {
+  initialize: function () {
+    //set the following system property to control Debug logging for SAML
+    this.debug = gs.getProperty("glide.authenticate.sso.saml2.debug", "false");
+
+    this.certGR = null;
+    var gr = new GlideRecord("sys_certificate");
+    gr.addQuery("name", "SAML 2.0");
+    gr.addActiveQuery();
+    gr.query();
+    if (gr.next()) this.certGR = gr;
+
+    //Keep SAMLAssertion object for later retrieve NameID and SessionIndex
+    this.SAMLAssertion = null;
+
+    // Initialize OpenSAML library.
+    AlgisDemoCopySAML2.bootstrapSAML();
+  },
+
+  validateSignature: function (SAMLResponseXML) {
+    var DefaultBootstrap = Packages.org.opensaml.DefaultBootstrap;
+    var Response = Packages.org.opensaml.saml2.core.Response;
+    var Configuration = Packages.org.opensaml.xml.Configuration;
+    var Unmarshaller = Packages.org.opensaml.xml.io.Unmarshaller;
+    var BasicParserPool = Packages.org.opensaml.xml.parse.BasicParserPool;
+    var BasicX509Credential =
+      Packages.org.opensaml.xml.security.x509.BasicX509Credential;
+    var Signature = Packages.org.opensaml.xml.signature.Signature;
+    var SignatureValidator =
+      Packages.org.opensaml.xml.signature.SignatureValidator;
+    var SignatureProfileValidator =
+      Packages.org.opensaml.security.SAMLSignatureProfileValidator;
+    var Document = Packages.org.w3c.dom.Document;
+    var Element = Packages.org.w3c.dom.Element;
+    var StringReader = Packages.java.io.StringReader;
+    var QName = Packages.javax.xml.namespace.QName;
+    var XMLUtil = GlideXMLUtil;
+    var X509Certificate = Packages.javax.security.cert.X509Certificate;
+
+    var document = XMLUtil.parse(SAMLResponseXML, true);
+    document.normalizeDocument();
+    var metadataRoot = document.getDocumentElement();
+
+    var qName = new QName(
+      metadataRoot.getNamespaceURI(),
+      metadataRoot.getLocalName(),
+      metadataRoot.getPrefix()
+    );
+
+    // get an unmarshaller
+    var unmarshaller =
+      Configuration.getUnmarshallerFactory().getUnmarshaller(qName);
+
+    // unmarshall using the document root element
+    var response = unmarshaller.unmarshall(metadataRoot);
+    if (response == null) {
+      this.logWarning("Unable to unmarshall response");
+      return false;
+    }
+    // we have the xml unmarshalled to a response object
+    this.logDebug("Response object created");
+    this.logDebug("Issue Instant: " + response.getIssueInstant().toString());
+    this.logDebug(
+      "Signature Reference ID: " + response.getSignatureReferenceID().toString()
+    );
+
+    var certificate = null;
+    if (this.certGR != null) {
+      var bytes;
+      var str = this.certGR.pem_certificate.toString();
+      str = str.substring(29, str.indexOf("-----END CERTIFICATE-----") - 2);
+      bytes = GlideStringUtil.base64DecodeAsBytes(str);
+      certificate = X509Certificate.getInstance(bytes);
+    } else {
+      this.logWarning("Unable to locate SAML 2.0 certificate");
+      return false;
+    }
+
+    this.logDebug(
+      "certificate Issuer DN: " + certificate.getIssuerDN().getName()
+    );
+
+    // generate public key to validate signatures
+    var publicKey = certificate.getPublicKey();
+
+    if (publicKey != null) {
+      // we have the public key
+      this.logDebug("Public key created");
+    } else {
+      this.logWarning("Public key not found in certificate");
+      return false;
+    }
+
+    // create credentials
+    var publicCredential = new BasicX509Credential();
+
+    // add public key value
+    publicCredential.setPublicKey(publicKey);
+
+    // create SAMLProfileSignatureValidator
+    var signatureProfileValidator = new SignatureProfileValidator();
+
+    // create SignatureValidator
+    var signatureValidator = new SignatureValidator(publicCredential);
+
+    // get the signature to validate from the response object
+    var signature = response.getSignature();
+    this.SAMLAssertion = response.getAssertions().get(0);
+    if (signature == null) {
+      this.logDebug(
+        "Signature not in response, attempting to get signature from assertion"
+      );
+      signature = this.SAMLAssertion.getSignature(); // get signature from assertion as 2nd attempt
+      if (signature == null) {
+        this.logWarning("Signature not found in response");
+        return false;
+      } else {
+        this.logDebug("Got signature");
+      }
+    }
+
+    // validate signature profile and signature
+    try {
+      this.logDebug(XMLUtil.toString(signature.getDOM()));
+      signatureProfileValidator.validate(signature);
+      signatureValidator.validate(signature);
+    } catch (ve) {
+      this.logDebug("Signature is NOT valid.");
+      this.logDebug(ve.getMessage());
+      return false;
+    }
+
+    this.logDebug("Signature is valid.");
+    return true;
+  },
+
+  validateCertificate: function (xmlDoc) {
+    //// Verify that assertion is authorized by comparing the installed certificate
+    //// with the one posted in the SAMLResponse
+
+    if (this.certGR == null) {
+      this.logWarning(
+        "Could not find a digital signature stored in Service Now instance."
+      );
+      return false;
+    }
+
+    var certStr = this.certGR.pem_certificate.toString();
+    certStr = certStr.substring(
+      29,
+      certStr.indexOf("-----END CERTIFICATE-----") - 2
+    );
+    certStr =
+      Packages.org.apache.commons.lang.StringUtils.deleteWhitespace(certStr);
+
+    var inboundCert = xmlDoc.getNodeText("//KeyInfo/X509Data/X509Certificate");
+    inboundCert =
+      Packages.org.apache.commons.lang.StringUtils.deleteWhitespace(
+        inboundCert
+      );
+    if (inboundCert == null || inboundCert == "") {
+      this.logWarning(
+        "Could not find a digital signature in the inbound SAMLResponse"
+      );
+      return false;
+    }
+
+    if (!certStr.equals(inboundCert)) {
+      //gs.log(certStr);
+      //gs.log(inboundCert);
+
+      this.logWarning("Certificates dont match");
+      return false;
+    }
+
+    return true;
+  },
+
+  getNameID: function () {
+    var nameId = null;
+    try {
+      nameId = this.SAMLAssertion.getSubject().getNameID().getValue();
+    } catch (e) {
+      this.logDebug("NameID value not found:" + e.getMessage());
+    }
+    this.logDebug("NameID:" + nameId);
+
+    return nameId;
+  },
+
+  getSessionIndex: function () {
+    var sessionIndex = null;
+    try {
+      sessionIndex = this.SAMLAssertion.getAuthnStatements()
+        .get(0)
+        .getSessionIndex();
+    } catch (e) {
+      this.logDebug("SessionIndex value not found:" + e.getMessage());
+    }
+
+    return sessionIndex;
+  },
+
+  getEncodedSAMLRequest: function (element) {
+    var XMLUtil = GlideXMLUtil;
+    var ByteArrayOutputStream = Packages.java.io.ByteArrayOutputStream;
+    var Deflater = Packages.java.util.zip.Deflater;
+    var DeflaterOutputStream = Packages.java.util.zip.DeflaterOutputStream;
+    var Base64 = Packages.org.opensaml.xml.util.Base64;
+    var StringUtil = GlideStringUtil;
+
+    var samlRequest = XMLUtil.toFragmentString(element.getOwnerDocument());
+    this.logDebug(samlRequest);
+
+    var bytesOut = new ByteArrayOutputStream();
+    var deflater = new Deflater(Deflater.DEFLATED, true);
+    var deflaterStream = new DeflaterOutputStream(bytesOut, deflater);
+    var bytes = samlRequest.getBytes("UTF-8");
+    deflaterStream.write(bytes, 0, bytes.length);
+    deflaterStream.finish();
+
+    var base64EncodedSamlRequest = Base64.encodeBytes(
+      bytesOut.toByteArray(),
+      Base64.DONT_BREAK_LINES
+    );
+    base64EncodedSamlRequest = StringUtil.urlEncode(base64EncodedSamlRequest);
+    return base64EncodedSamlRequest;
+  },
+
+  createLogoutRequest: function () {
+    var LogoutRequestBuilder =
+      Packages.org.opensaml.saml2.core.impl.LogoutRequestBuilder;
+    var LogoutRequestMarshaller =
+      Packages.org.opensaml.saml2.core.impl.LogoutRequestMarshaller;
+    var DateTime = Packages.org.joda.time.DateTime;
+    var SAMLVersion = Packages.org.opensaml.common.SAMLVersion;
+
+    var sessionIndex = request
+      .getSession()
+      .getAttribute("glide.saml2.session_index");
+    var nameId = request.getSession().getAttribute("glide.saml2.session_id");
+
+    var b = new LogoutRequestBuilder();
+    var r = b.buildObject();
+    r.setID(this.getRequestID());
+    r.setVersion(SAMLVersion.VERSION_20);
+    r.setIssueInstant(new DateTime());
+
+    r.setIssuer(this.createIssuer_updated());
+    r.setNameID(this.createNameID_updated(nameId));
+    var idpLogoutURL = gs.getProperty(
+      "glide.authenticate.sso.saml2.idp_logout_url",
+      "idp_logout_url"
+    );
+    r.setDestination(idpLogoutURL);
+    r.getSessionIndexes().add(this.createSessionIndex_updated(sessionIndex));
+
+    var lrm = new LogoutRequestMarshaller();
+    return lrm.marshall(r);
+  },
+
+  //// ---- helper methods ////
+  createSessionIndex_updated: function (sessionIndex) {
+    var SessionIndexBuilder =
+      Packages.org.opensaml.saml2.core.impl.SessionIndexBuilder;
+
+    var sib = new SessionIndexBuilder();
+    var si = sib.buildObject();
+    si.setSessionIndex(sessionIndex);
+    return si;
+  },
+
+  createNameID_updated: function (nameId) {
+    var NameIDBuilder = Packages.org.opensaml.saml2.core.impl.NameIDBuilder;
+    var nameIdPolicy = gs.getProperty(
+      "glide.authenticate.sso.saml2.nameid_policy",
+      "nameid_policy"
+    );
+    var serviceURL = gs.getProperty(
+      "glide.authenticate.sso.saml2.service_url",
+      "service_url"
+    );
+
+    if (!nameIdPolicy || nameIdPolicy.equals("")) {
+      throw new AlgisDemoCopySAML2Error(
+        "No name ID policy configured, skipping optional specification"
+      );
+    }
+
+    var nb = new NameIDBuilder();
+    var nid = nb.buildObject();
+    nid.setValue(nameId);
+    nid.setFormat(nameIdPolicy);
+    return nid;
+  },
+
+  createAuthnRequest: function () {
+    var DateTime = Packages.org.joda.time.DateTime;
+    var SAMLVersion = Packages.org.opensaml.common.SAMLVersion;
+    var AuthnRequestBuilder =
+      Packages.org.opensaml.saml2.core.impl.AuthnRequestBuilder;
+    var AuthnRequestMarshaller =
+      Packages.org.opensaml.saml2.core.impl.AuthnRequestMarshaller;
+    var Boolean = Packages.java.lang.Boolean;
+    var serviceURL = gs.getProperty("glide.authenticate.sso.saml2.service_url");
+
+    var builder = new AuthnRequestBuilder();
+    var authnRequest = builder.buildObject();
+    authnRequest.setProviderName(serviceURL);
+    // use the session ID
+    authnRequest.setID(this.getRequestID());
+    authnRequest.setVersion(SAMLVersion.VERSION_20);
+    authnRequest.setIssueInstant(new DateTime());
+    authnRequest.setForceAuthn(new Boolean(false));
+    authnRequest.setIsPassive(new Boolean(false));
+    authnRequest.setAssertionConsumerServiceURL(serviceURL);
+
+    authnRequest.setIssuer(this.createIssuer_updated());
+    authnRequest.setNameIDPolicy(this.createNameIDPolicy_updated());
+    authnRequest.setRequestedAuthnContext(
+      this.createRequestedAuthnContext_updated()
+    );
+
+    authnRequest.setProtocolBinding(
+      "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+    );
+
+    var m = new AuthnRequestMarshaller();
+    return m.marshall(authnRequest);
+  },
+
+  getRequestID: function () {
+    return "SNC" + this.generateRandomId();
+  },
+
+  //// ---- helper methods ////
+  createAuthnContextClassRef_updated: function () {
+    var AuthnContextClassRefBuilder =
+      Packages.org.opensaml.saml2.core.impl.AuthnContextClassRefBuilder;
+    var authnContextClassRefBuilder = new AuthnContextClassRefBuilder();
+    var authnContextClassRef = authnContextClassRefBuilder.buildObject();
+
+    authnContextClassRef.setAuthnContextClassRef(
+      "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+    );
+    return authnContextClassRef;
+  },
+
+  createRequestedAuthnContext_updated: function () {
+    var RequestedAuthnContextBuilder =
+      Packages.org.opensaml.saml2.core.impl.RequestedAuthnContextBuilder;
+    var AuthnContextComparisonTypeEnumeration =
+      Packages.org.opensaml.saml2.core.AuthnContextComparisonTypeEnumeration;
+
+    var requestedAuthnContextBuilder = new RequestedAuthnContextBuilder();
+    var requestedAuthnContext = requestedAuthnContextBuilder.buildObject();
+    requestedAuthnContext.setComparison(
+      AuthnContextComparisonTypeEnumeration.EXACT
+    );
+    requestedAuthnContext
+      .getAuthnContextClassRefs()
+      .add(this.createAuthnContextClassRef_updated());
+
+    return requestedAuthnContext;
+  },
+
+  createNameIDPolicy_updated: function () {
+    var NameIDPolicyBuilder =
+      Packages.org.opensaml.saml2.core.impl.NameIDPolicyBuilder;
+    var nameIdPolicyStr = gs.getProperty(
+      "glide.authenticate.sso.saml2.nameid_policy",
+      "nameid_policy"
+    );
+    var serviceURLStr = gs.getProperty(
+      "glide.authenticate.sso.saml2.service_url",
+      "service_url"
+    );
+
+    if (nameIdPolicyStr == null || nameIdPolicyStr == "") {
+      throw new AlgisDemoCopySAML2Error(
+        "No name ID policy configured, skipping optional specification"
+      );
+    }
+
+    // Create NameIDPolicy
+    var nameIdPolicyBuilder = new NameIDPolicyBuilder();
+    var nameIdPolicy = nameIdPolicyBuilder.buildObject();
+    // insist on the emailAddress format to match with our user's email address
+    nameIdPolicy.setFormat(nameIdPolicyStr);
+    nameIdPolicy.setAllowCreate(true);
+    return nameIdPolicy;
+  },
+
+  createIssuer_updated: function () {
+    var IssuerBuilder = Packages.org.opensaml.saml2.core.impl.IssuerBuilder;
+    var issuerStr = gs.getProperty(
+      "glide.authenticate.sso.saml2.issuer",
+      "issuer"
+    );
+
+    var issuerBuilder = new IssuerBuilder();
+    var issuer = issuerBuilder.buildObject();
+    issuer.setValue(issuerStr);
+    return issuer;
+  },
+
+  logDebug: function (msg) {
+    if (this.debug == true || this.debug == "true") {
+      gs.log(msg);
+    }
+  },
+
+  logError: function (msg) {
+    this.logDebug("ERROR: " + msg);
+    gs.logError(msg, "AlgisDemoCopySAML2");
+  },
+
+  logWarning: function (msg) {
+    this.logDebug("WARNING: " + msg);
+    gs.logWarning(msg, "AlgisDemoCopySAML2");
+  },
+
+  generateRandomId: function () {
+    var id = "";
+    for (var i = 0; i < 32; i++) {
+      id += ((Math.random() * 16) | 0).toString(16);
+    }
+    return id;
+  },
+};
+
+AlgisDemoCopySAML2.bootstrapSAML = function () {
+  // Initialize OpenSAML library.
+  if (!SNC.SSOUtils.isSAMLBootstrapped()) {
+    var DefaultBootstrap = Packages.org.opensaml.DefaultBootstrap;
+    DefaultBootstrap.bootstrap();
+    SNC.SSOUtils.setSAMLBootstrapped();
+    AlgisDemoCopySAML2.logDebug("AlgisDemoCopySAML2 Library initialized!");
+  }
+}; // 2023-06-13 06:08:08// 2023-06-13 06:16:03
