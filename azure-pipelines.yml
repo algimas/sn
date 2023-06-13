@@ -12,6 +12,22 @@ trigger:
   paths:
     include:
     - global/*
+    exclude:
+    - '*.txt'
+    - '*.md'
+    - '*.js'
+    - '*.json'
+    - '*.xml'
+    - '*.yml'
+    - '*.py'
+    - '*.java'
+    - '*.c'
+    - '*.cpp'
+    - '*.h'
+    - '*.hpp'
+    - '*.html'
+
+
 
 # Specifies the pool of virtual machines to use for the pipeline.
 # In this case, we're using the latest Ubuntu VM image.
