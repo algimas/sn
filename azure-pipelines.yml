@@ -519,7 +519,15 @@ stages:
   - job: 'SonarQube'
 
     steps:
+
+    - script: |
+        echo $url 
+        response=$(curl --connect-timeout 10 -f $url ; echo $?)
+        echo "##vso[task.setvariable variable=pingresult]$response"
+      displayName: 'Ping URL'
+
     - task: SonarQubePrepare@4
+      condition: eq(variables['pingresult'], '0')
       inputs:
         SonarQube: 'sonarqubedemo'
         scannerMode: 'CLI'
@@ -532,12 +540,15 @@ stages:
           sonar.login=$(sonarLogin)
 
     - task: SonarQubeAnalyze@4
+      condition: eq(variables['pingresult'], '0')
 
     - task: SonarQubePublish@4
+      condition: eq(variables['pingresult'], '0')
       inputs:
         pollingTimeoutSec: '300'
 
     - task: ServiceNow-DevOps-Build-Sonar-Registration@1
+      condition: eq(variables['pingresult'], '0')
       inputs:
         connectedServiceName: 'snow8'
         sonarProjectKey: 'algimas'
