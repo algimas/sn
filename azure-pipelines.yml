@@ -485,16 +485,18 @@ stages:
   - job: 'SonarQube'
     dependsOn: PreparationJob
     variables:
-    - name: sonarUrl
-      value: $[stageDependencies.PreparationStage.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
-    - name: sonarLogin
-      value: $[stageDependencies.PreparationStage.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
+      urlsonar: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
+      loginsonar: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
     steps:
 
     - script: |
-        echo $(sonarUrl)
-        echo $(sonarLogin)
-        curl --connect-timeout 10 -f $sonarUrl 
+        echo $(urlsonar)
+        echo $(loginsonar)
+      displayName: 'Echo two vars'
+
+
+    - script: |
+        curl --connect-timeout 10 -f $urlsonar 
         response=$?
         echo "##vso[task.setvariable variable=pingresult]$response"
       displayName: 'Ping URL'
