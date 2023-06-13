@@ -512,10 +512,13 @@ stages:
 
 
 
-    - script: |
-        exit 1
-      displayName: 'TMP STOP'
+    # - script: |
+    #     exit 1
+    #   displayName: 'TMP STOP'
 
+  - job: 'SonarQube'
+
+    steps:
     - task: SonarQubePrepare@4
       inputs:
         SonarQube: 'sonarqubedemo'
@@ -533,3 +536,9 @@ stages:
     - task: SonarQubePublish@4
       inputs:
         pollingTimeoutSec: '300'
+
+    - task: ServiceNow-DevOps-Build-Sonar-Registration@1
+      inputs:
+        connectedServiceName: 'snow8'
+        sonarProjectKey: 'algimas'
+        sonarInstanceUrl: '$(sonarUrl)'
