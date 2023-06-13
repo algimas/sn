@@ -462,8 +462,8 @@ stages:
         echo $url
         echo $login
         # Set them as output variables
-        echo "##vso[task.setvariable variable=sonarUrl;isOutput=true]$url"
-        echo "##vso[task.setvariable variable=sonarLogin;isOutput=true]$login"
+        # echo "##vso[task.setvariable variable=sonarUrl]$url"
+        # echo "##vso[task.setvariable variable=sonarLogin]$login"
       displayName: 'Extract values from JSON'
       name: extractFromJson
 
