@@ -482,17 +482,13 @@ stages:
 
 
 
-
-
-
-
-
-
   - job: 'SonarQube'
     dependsOn: PreparationJob
     variables:
-      sonarUrl: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
-      sonarLogin: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
+    - name: sonarUrl
+      value: $[stageDependencies.PreparationStage.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
+    - name: sonarLogin
+      value: $[stageDependencies.PreparationStage.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
     steps:
 
     - script: |
