@@ -41,7 +41,7 @@
   var gr = new GlideRecord("change_request");
   var Base64 = Packages.org.opensaml.xml.util.Base64;
   var hardCodedSysId = "54f124d91b0be9509ed7cbfc0a4bcb19";
-  //current.update();
+  current.update();
 
   var queryString = "descriptionSTARTSWITHtestttttttttttttttttttttttt";
 
@@ -54,4 +54,4 @@
     inc.setValue("work_notes", "Some text");
     inc.update();
   }
-})(current, previous); // 2023-06-13 05:55:07// 2023-06-13 06:50:33// 2023-06-13 06:53:29// 2023-06-13 07:02:59// 2023-06-13 08:20:42// 2023-06-13 08:36:08// 2023-06-13 08:45:52// 2023-06-13 08:56:54// 2023-06-13 09:01:23// 2023-06-13 09:18:42// 2023-06-13 09:33:10// 2023-06-13 09:39:35// 2023-06-13 10:20:55// 2023-06-13 10:25:20// 2023-06-13 11:08:31// 2023-06-13 11:16:37// 2023-06-13 11:50:56// 2023-06-13 11:59:10// 2023-06-13 12:03:54// 2023-06-13 12:08:50// 2023-06-13 12:22:30
+})(current, previous); // 2023-06-13 12:25:47
