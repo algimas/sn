@@ -383,6 +383,8 @@ stages:
         npx prettier $(hashValue).js > $(lastPart).js
         # Move the file to the 'global' directory
         mv $(lastPart).js global/$(lastPart).js
+        # Also move another file JSON that should be later commited to Git
+        mv $(lastPart).json global/$(lastPart).json
       displayName: 'Prettier Code Formatting to new file'
 
     - script: |
@@ -463,6 +465,7 @@ stages:
         git config --global user.name "$(Build.RequestedFor)"
         git checkout master
         git add global/$(lastPart).js
+        git add global/$(lastPart).json
         git commit -m "Prettier formatting applied"
         git push https://$(sonarLogin)@github.com/$(Build.Repository.Name).git master
       displayName: 'Commit and push Prettier result'
