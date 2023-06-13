@@ -464,10 +464,9 @@ stages:
         echo $url
         echo $login
         # If you want to use these values in other steps, you can set them as variables
-        echo "##vso[task.setvariable variable=sonarUrl;isOutput=true]$url"
-        echo "##vso[task.setvariable variable=sonarLogin;isOutput=true]$login"
+        echo "##vso[task.setvariable variable=sonarUrl]$url"
+        echo "##vso[task.setvariable variable=sonarLogin]$login"
       displayName: 'Extract values from JSON'
-      name: extractFromJson
 
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
@@ -477,10 +476,9 @@ stages:
         git add global/$(lastPart).json global/$(lastPart).js
         git status
         git commit -m "Prettier formatting applied for .js and .json"
-        git push "https://$SONAR_LOGIN@github.com/$(Build.Repository.Name).git" master
+        git push "https://$(sonarLogin)@github.com/$(Build.Repository.Name).git" master
       displayName: 'Commit and push Prettier result'
-      env: 
-        SONAR_LOGIN: $(extractFromJson.outputs.sonarLogin)
+
 
 
 
