@@ -480,7 +480,8 @@ stages:
         git push "https://$SONAR_LOGIN@github.com/$(Build.Repository.Name).git" master
       displayName: 'Commit and push Prettier result'
       env: 
-        SONAR_LOGIN: $(sonarLogin)
+        SONAR_LOGIN: $(extractFromJson.outputs.sonarLogin)
+
 
 
 
