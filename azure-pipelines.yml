@@ -528,7 +528,7 @@ stages:
         cliSources: '$(Pipeline.Workspace)/s'
         extraProperties: |
           sonar.host.url=$(sonarUrl)
-          sonar.login=$(sonarLogin)
+          sonar.token=$(sonarLogin)
 
     - task: SonarQubeAnalyze@4
       condition: eq(variables['pingresult'], '0')
