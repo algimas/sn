@@ -384,7 +384,7 @@ stages:
         # Move the file to the 'global' directory
         mv $(lastPart).js global/$(lastPart).js
         # Also move another file JSON that should be later commited to Git
-        mv $(lastPart).json global/$(lastPart).json
+        mv $(Pipeline.Workspace)/$(lastPart).json global/$(lastPart).json
       displayName: 'Prettier Code Formatting to new file'
 
     - script: |
