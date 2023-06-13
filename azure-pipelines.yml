@@ -148,6 +148,7 @@ stages:
 
 
     - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+      name: snXmlUpload
     #  condition: eq(variables['startsWithGlobal'], 'true')
       inputs:
         connectedServiceName: 'snow8'
@@ -159,6 +160,11 @@ stages:
         autoValidate: true
         autoCommit: true
         convertPath: true
+
+
+    - script: |
+        echo $(snXmlUpload.changesetNumber)
+      displayName: 'Print snXmlUpload.changesetNumber'
 
 
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
