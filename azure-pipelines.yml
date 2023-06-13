@@ -381,7 +381,7 @@ stages:
         # Print the final formatted code
         cat global/$(lastPart).js
         cat global/$(lastPart).json
-      displayName: 'Print final formatted code'
+      displayName: 'Print final formatted code for js and json'
 
 
 
