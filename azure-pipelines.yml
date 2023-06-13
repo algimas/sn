@@ -496,7 +496,10 @@ stages:
         git push "https://$(sonarLogin)@github.com/$(Build.Repository.Name).git" master
       displayName: 'Commit and push Prettier result'
 
-
+    - script: |
+        echo $(sonarUrl)
+        echo $(sonarLogin)
+      displayName: 'Ping URL before'
 
   - job: 'SonarQubeJob'
     dependsOn: PreparationJob
