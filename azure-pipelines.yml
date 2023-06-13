@@ -354,56 +354,37 @@ stages:
     #       tree /home/vsts/work/node_modules
     #   displayName: 'List node_modules'
 
-# - stage: Prettier
-#   jobs:
-
-#   - job: 'Prettier'
-#     steps:
-
-    # - script: |
-    #     exit 1
-    #   displayName: 'TMP STOP'
 
 
     - script: |
+        # Install Prettier
         npm install prettier
       displayName: 'Install Prettier'
 
-    # - script: |
-    #     npx prettier --check $(hashValue).js
-    #   displayName: 'Prettier Code Formatting'
+    - script: |
+        # Runs Prettier on JavaScript file and outputs the formatted code to a new file
+        npx prettier $(hashValue).js > $(lastPart).js
+      displayName: 'Prettier Code Formatting to new JS file'
 
     - script: |
-        # Runs Prettier and outputs the formatted code to a new file
-        npx prettier $(hashValue).js > $(lastPart).js
-      displayName: 'Prettier Code Formatting to new file'
+        # Runs Prettier on JSON file and outputs the formatted code to a new file
+        npx prettier $(Pipeline.Workspace)/$(lastPart).json > $(lastPart).json
+      displayName: 'Prettier Code Formatting to new JSON file'
 
     - script: |
-        # Runs Prettier and outputs the formatted code to a new file
-        npx prettier $(hashValue).js > $(lastPart).js
-        # Move the file to the 'global' directory
+        # Move the formatted JavaScript and JSON files to the 'global' directory
         mv $(lastPart).js global/$(lastPart).js
-        # Also move another file JSON that should be later commited to Git
-        mv $(Pipeline.Workspace)/$(lastPart).json global/$(lastPart).json
-      displayName: 'Prettier Code Formatting to new file'
+        mv $(lastPart).json global/$(lastPart).json
+      displayName: 'Move formatted files to global directory'
 
     - script: |
+        # Print the final formatted code
         cat global/$(lastPart).js
+        cat global/$(lastPart).json
       displayName: 'Print final formatted code'
 
 
-    # - script: |
-    #     cat $(lastPart).js
-    #   displayName: 'Print final formatted'
 
-
-
-
-# - stage: SonarQube
-#   jobs:
-
-#   - job: 'SonarQube'
-#     steps:
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
       inputs:
         connectedServiceName: 'snow8'
