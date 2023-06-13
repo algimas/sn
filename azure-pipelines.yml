@@ -183,10 +183,11 @@ stages:
 
 
     - script: |
-        echo $(DevOpsConfigGetSnapshot.snapshotObjects) > temp.json
+        echo '$(DevOpsConfigGetSnapshot.snapshotObjects)' | jq . > temp.json
         NAME=$(jq -r '.result[0].name' temp.json)
         echo "##vso[task.setvariable variable=snapshotName]$NAME"
       displayName: 'Extract name and set as pipeline variable'
+
 
     - script: |
         echo $(snapshotName)
