@@ -241,9 +241,9 @@ stages:
     #   displayName: 'View DevOps Config for XML.json'
 
 
-    - script: |
-        sed -i 's/##-##/\//g' $(Pipeline.Workspace)/config_eslint.json
-      displayName: 'Replace strings in JSON file'
+    # - script: |
+    #     sed -i 's/##-##/\//g' $(Pipeline.Workspace)/config_eslint.json
+    #   displayName: 'Replace strings in JSON file'
 
     - script: |
         hexdump -C $(Pipeline.Workspace)/config_eslint.json
