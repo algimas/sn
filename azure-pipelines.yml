@@ -178,8 +178,8 @@ stages:
 
 
     - script: |
-        echo $(DevOpsConfigGetSnapshot.snapshotName)
-      displayName: 'Print DevOpsConfigGetSnapshot.snapshotName'
+        echo $(DevOpsConfigGetSnapshot.snapshotObjects)
+      displayName: 'Print DevOpsConfigGetSnapshot.snapshotObjects'
 
 
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
