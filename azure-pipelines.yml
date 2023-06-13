@@ -13,19 +13,20 @@ trigger:
     include:
     - global/*
     exclude:
-    - '*.txt'
-    - '*.md'
-    - '*.js'
-    - '*.json'
-    - '*.xml'
-    - '*.yml'
-    - '*.py'
-    - '*.java'
-    - '*.c'
-    - '*.cpp'
-    - '*.h'
-    - '*.hpp'
-    - '*.html'
+    - 'global/*.txt'
+    - 'global/*.md'
+    - 'global/*.js'
+    - 'global/*.json'
+    - 'global/*.xml'
+    - 'global/*.yml'
+    - 'global/*.py'
+    - 'global/*.java'
+    - 'global/*.c'
+    - 'global/*.cpp'
+    - 'global/*.h'
+    - 'global/*.hpp'
+    - 'global/*.html'
+
 
 
 
