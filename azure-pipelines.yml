@@ -480,9 +480,10 @@ stages:
         git add global/$(lastPart).json global/$(lastPart).js
         git status
         git commit -m "Prettier formatting applied for .js and .json"
-        repo_url="https://$(sonarLogin)@github.com/$(Build.Repository.Name).git"
+        repo_url="https://'"$(sonarLogin)"'@github.com/$(Build.Repository.Name).git"
         git push $repo_url master
       displayName: 'Commit and push Prettier result'
+
 
 
 
