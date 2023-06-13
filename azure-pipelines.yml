@@ -463,12 +463,11 @@ stages:
         # Print the values to the console
         echo $url
         echo $login
-        # Store the values in a text file
-        Set-Content -Path $(Pipeline.Workspace)/sonarUrl.txt -Value $url
-        Set-Content -Path $(Pipeline.Workspace)/sonarLogin.txt -Value $login
+        # If you want to use these values in other steps, you can set them as variables
+        echo "##vso[task.setvariable variable=sonarUrl]$url"
+        echo "##vso[task.setvariable variable=sonarLogin]$login"
       displayName: 'Extract values from JSON'
-    - publish: $(Pipeline.Workspace)
-      artifact: sonarInfo
+      name: extractFromJson
 
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
@@ -495,13 +494,10 @@ stages:
       sonarUrl: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
       sonarLogin: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
     steps:
-    - download: current
-      artifact: sonarInfo
+
     - script: |
-        sonarUrl=$(cat $(Pipeline.Workspace)/sonarUrl.txt)
-        sonarLogin=$(cat $(Pipeline.Workspace)/sonarLogin.txt)
-        echo $sonarUrl
-        echo $sonarLogin
+        echo $(sonarUrl)
+        echo $(sonarLogin)
         curl --connect-timeout 10 -f $sonarUrl 
         response=$?
         echo "##vso[task.setvariable variable=pingresult]$response"
