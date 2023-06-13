@@ -490,12 +490,13 @@ stages:
     steps:
 
     - script: |
-        echo $(variables['sonarUrl'])
-        echo $(variables['sonarLogin'])
-        curl --connect-timeout 10 -f $(variables['sonarUrl'])
+        echo $(sonarUrl)
+        echo $(sonarLogin)
+        curl --connect-timeout 10 -f $(sonarUrl)
         response=$?
         echo "##vso[task.setvariable variable=pingresult]$response"
       displayName: 'Ping URL'
+
 
 
 
