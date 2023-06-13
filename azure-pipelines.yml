@@ -452,8 +452,6 @@ stages:
         hexdump -C $(Pipeline.Workspace)/sonar_qube.json
       displayName: 'View content of sonar_qube.json using hexdump'
 
-
-
     - pwsh: |
         # Read the json file into a PowerShell object
         $json = Get-Content -Path $(Pipeline.Workspace)/sonar_qube.json | ConvertFrom-Json
@@ -463,11 +461,15 @@ stages:
         # Print the values to the console
         echo $url
         echo $login
-        # If you want to use these values in other steps, you can set them as variables
-        echo "##vso[task.setvariable variable=sonarUrl]$url"
-        echo "##vso[task.setvariable variable=sonarLogin]$login"
+        # Set them as output variables
+        echo "##vso[task.setvariable variable=sonarUrl;isOutput=true]$url"
+        echo "##vso[task.setvariable variable=sonarLogin;isOutput=true]$login"
       displayName: 'Extract values from JSON'
       name: extractFromJson
+
+        # echo "##vso[task.setvariable variable=sonarUrl]$url"
+        # echo "##vso[task.setvariable variable=sonarLogin]$login"
+
 
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
@@ -488,7 +490,6 @@ stages:
       sonarUrl: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
       sonarLogin: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
     steps:
-
     - script: |
         echo $(sonarUrl)
         echo $(sonarLogin)
@@ -496,6 +497,7 @@ stages:
         response=$?
         echo "##vso[task.setvariable variable=pingresult]$response"
       displayName: 'Ping URL'
+
 
 
 
