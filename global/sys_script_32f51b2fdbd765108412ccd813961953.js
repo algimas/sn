@@ -1,9 +1,10 @@
 (function executeRule(current, previous /*null when async*/) {
+  var temp = current;
   // Add your code here
   return true;
   gs.warn("ssss");
-  update.current();
-  current.update();
+
+  temp.update();
   var gr = "ee";
   gs.log("sdfdsfsadhj");
 })(current, previous);
