@@ -1,0 +1,87 @@
+{
+  "sys_script_32f51b2fdbd765108412ccd813961953": {
+    "record_update": {
+      "sys_translated_text": {
+        "query": "documentkey=32f51b2fdbd765108412ccd813961953",
+        "action": "delete_multiple"
+      },
+      "sys_domain": "global",
+      "table": "sys_script",
+      "sys_script": {
+        "client_callable": "false",
+        "template": "",
+        "access": "package_private",
+        "action_insert": "true",
+        "action_update": "true",
+        "advanced": "true",
+        "action_delete": "true",
+        "change_fields": "false",
+        "description": "",
+        "action_query": "false",
+        "sys_updated_on": "2023-06-14 14:08:34",
+        "when": "before",
+        "sys_class_name": "sys_script",
+        "sys_id": "32f51b2fdbd765108412ccd813961953",
+        "is_rest": "false",
+        "rest_method_text": "",
+        "sys_updated_by": "algis",
+        "rest_service_text": "",
+        "sys_created_on": "2023-06-14 14:04:30",
+        "sys_domain": "global",
+        "action": "INSERT_OR_UPDATE",
+        "sys_name": "Test-safe2delete",
+        "sys_scope": { "display_value": "Global", "content": "global" },
+        "sys_created_by": "algis",
+        "order": "222",
+        "rest_method": "",
+        "rest_service": "",
+        "add_message": "false",
+        "sys_mod_count": "2",
+        "active": "true",
+        "sys_overrides": "",
+        "collection": "sys_user_role_contains",
+        "message": "",
+        "priority": "100",
+        "sys_domain_path": "/",
+        "script": "139b89565d2b890e0c332629c7d32252422ec4311dbfe57e355c781160234d5d",
+        "abort_action": "false",
+        "execute_function": "false",
+        "filter_condition": {
+          "item": [
+            {
+              "goto": "false",
+              "or": "false",
+              "field": "sys_name",
+              "endquery": "false",
+              "value": "sadfsadfsadfsgsagfdsgdsf",
+              "newquery": "false",
+              "operator": "STARTSWITH"
+            },
+            {
+              "goto": "false",
+              "or": "false",
+              "field": "",
+              "endquery": "true",
+              "value": "",
+              "newquery": "false",
+              "operator": "="
+            }
+          ],
+          "table": "sys_user_role_contains",
+          "content": "sys_nameSTARTSWITHsadfsadfsadfsgsagfdsgdsf^EQ"
+        },
+        "sys_package": {
+          "display_value": "Global",
+          "source": "global",
+          "content": "global"
+        },
+        "condition": "",
+        "sys_update_name": "sys_script_32f51b2fdbd765108412ccd813961953",
+        "rest_variables": "",
+        "name": "Test-safe2delete",
+        "role_conditions": "",
+        "sys_policy": ""
+      }
+    }
+  }
+}
