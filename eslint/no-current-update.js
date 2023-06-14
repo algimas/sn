@@ -13,7 +13,7 @@ module.exports = {
         messages: {
             avoidCurrentUpdate: "Don't call current.update in BR scriptlets. It can cause unintended behavior and performance issues.",
             metadataNotFound: "Metadata has not been provided.",
-            tableNotFound: "Metadata has been provided but table name has not been found or is different than sys_script - (it is not Business Rule)."
+            tableNotFound: "Metadata has been provided but table name is different than sys_script."
         }
     },
 
@@ -23,13 +23,15 @@ module.exports = {
         let shouldLintFile = false;
         let messageKey = '';
 
+        const acceptableWhenValues = ["before", "after", "async_always", "async", "before_display"];
+
         if (fs.existsSync(metadataFilename)) {
             const metadata = JSON.parse(fs.readFileSync(metadataFilename, 'utf8'));
             const key = Object.keys(metadata)[0]; // first key in the object
             const sysScript = metadata[key]?.record_update?.sys_script;
             const table = metadata[key]?.record_update?.table;
 
-            if (table && table === 'sys_script' && sysScript?.when === 'after') {
+            if (table && table === 'sys_script' && acceptableWhenValues.includes(sysScript?.when)) {
                 shouldLintFile = true;
             } else {
                 messageKey = 'tableNotFound';
