@@ -567,9 +567,9 @@ stages:
       inputs:
         pollingTimeoutSec: '300'
 
-    - task: ServiceNow-DevOps-Build-Sonar-Registration@1
-      condition: eq(variables['pingresult'], '0')
-      inputs:
-        connectedServiceName: 'snow8'
-        sonarProjectKey: 'algimas'
-        sonarInstanceUrl: '$(sonarUrl)'
+    # - task: ServiceNow-DevOps-Build-Sonar-Registration@1
+    #   condition: eq(variables['pingresult'], '0')
+    #   inputs:
+    #     connectedServiceName: 'snow8'
+    #     sonarProjectKey: 'algimas'
+    #     sonarInstanceUrl: '$(sonarUrl)'
