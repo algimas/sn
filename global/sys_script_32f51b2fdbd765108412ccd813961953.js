@@ -5,4 +5,5 @@
   update.current();
   current.update();
   var gr = "ee";
+  gs.log("sdfdsfsa");
 })(current, previous);
