@@ -503,13 +503,27 @@ stages:
             "artifacts": [
                 {
                   "name": "$(lastPart).js",
-                  "version": "1.$(Build.BuildId)",
-                  "semanticVersion": "1.$(Build.BuildId).0",
+                  "version": "$(Build.BuildId)",
+                  "semanticVersion": "$(Build.BuildId)",
                   "repositoryName": "$(Build.Repository.Name)"
                 }
             ]
           }
 
+    - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+      inputs:
+        connectedServiceName: 'snow8'
+        artifactsPayload: |
+          {
+            "artifacts": [
+                {
+                  "name": "$(lastPart).json",
+                  "version": "$(Build.BuildId)",
+                  "semanticVersion": "$(Build.BuildId)",
+                  "repositoryName": "$(Build.Repository.Name)"
+                }
+            ]
+          }
 
   # - job: 'SonarQubeJob'
   #   dependsOn: PreparationJob
