@@ -504,7 +504,7 @@ stages:
                 {
                   "name": "$(lastPart).js",
                   "version": "$(Build.BuildId)",
-                  "semanticVersion": "$(Build.BuildId)",
+                  "semanticVersion": "1.$(Build.BuildId).0",
                   "BuildNumber": "$(Build.BuildNumber)",
                   "repositoryName": "$(Build.Repository.Name)"
                 }
@@ -520,12 +520,13 @@ stages:
                 {
                   "name": "$(lastPart).json",
                   "version": "$(Build.BuildId)",
-                  "semanticVersion": "$(Build.BuildId)",
+                  "semanticVersion": "1.$(Build.BuildId).0",
                   "BuildNumber": "$(Build.BuildNumber)",
                   "repositoryName": "$(Build.Repository.Name)"
                 }
             ]
           }
+
 
   # - job: 'SonarQubeJob'
   #   dependsOn: PreparationJob
