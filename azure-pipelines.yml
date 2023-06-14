@@ -245,10 +245,10 @@ stages:
       displayName: 'View DevOps Config config_eslint.json'
 
 
-    # - script: |
-    #     echo "cat - for viewing the file, does not work that is why hexdump is being used"
-    #     hexdump -C $(Pipeline.Workspace)/$(lastPart).json
-    #   displayName: 'View DevOps Config for XML.json'
+    - script: |
+        echo "cat - for viewing the file, does not work that is why hexdump is being used"
+        hexdump -C $(Pipeline.Workspace)/$(lastPart).json
+      displayName: 'View DevOps Config for XML.json'
 
 
     # - script: |
