@@ -284,7 +284,7 @@ stages:
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-algis/package.json
-      displayName: 'View content of package.json'
+      displayName: 'View ESLint package.json'
 
 
 
@@ -297,7 +297,7 @@ stages:
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-algis/index.js
-      displayName: 'View content of index.js'
+      displayName: 'View ESLint index.js'
 
 
 
