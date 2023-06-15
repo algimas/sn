@@ -27,14 +27,13 @@ const rule = {
     },
 
     create: context => {
-        console.log(`START of is-valid-gliderecord-call.js`);
         grVars = ["current", "previous"];
         return {
             CallExpression: node => {
                 if (node.callee && node.callee.object && node.callee.property && grVars.includes(node.callee.object.name) && GR_CHECK_FNS.includes(node.callee.property.name)) {
                     if (node.parent.type === "ExpressionStatement" && ["Program", "BlockStatement"].includes(node.parent.parent.type)) {
                         context.report({ node, messageId });
-                        console.log(`Issue found in file: ${context.getFilename()}`);
+                        //console.log(`Issue found in file: ${context.getFilename()}`);
                     }
                 }
             },
@@ -49,7 +48,7 @@ const rule = {
                 }
             },
             "Program:exit": () => {
-                console.log(`Finished checking file: ${context.getFilename()}`);
+                //console.log(`Finished checking file: ${context.getFilename()}`);
             }
         };
     }
