@@ -365,13 +365,24 @@ stages:
 
     # NOTE: when taking from GIT, then use: $(System.DefaultWorkingDirectory)/sn_eslint_config.json
     # NOTE: when taking from DevOpsConfig, then use: $(Pipeline.Workspace)/config_eslint.json
+    # - script: |
+    #     result=$(npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js 2>&1 || true)
+    #     result_base64=$(echo "$result" | base64 | tr -d '\n')
+    #     curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result_base64\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
+    #   displayName: 'ESLint Check and Send Results'
+    #   env:
+    #     ESLINT_METADATA_PATH: $(Pipeline.Workspace)/$(lastPart).json
+
+
     - script: |
         result=$(npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js 2>&1 || true)
+        echo "$result"  # <-- This line will print the output of eslint
         result_base64=$(echo "$result" | base64 | tr -d '\n')
         curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result_base64\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
       displayName: 'ESLint Check and Send Results'
       env:
         ESLINT_METADATA_PATH: $(Pipeline.Workspace)/$(lastPart).json
+
 
     # - task: CmdLine@2
     #   inputs:
