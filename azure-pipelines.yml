@@ -543,12 +543,7 @@ stages:
           }
 
 
-  # - job: 'SonarQubeJob'
-  #   dependsOn: PreparationJob
-  #   variables:
-  #     sonarUrl: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarUrl'] ]
-  #     sonarLogin: $[ dependencies.PreparationJob.outputs['extractFromJson.sonarLogin'] ]
-  #   steps:
+
 
     - script: |
         echo $(sonarUrl)
@@ -588,3 +583,10 @@ stages:
     #     connectedServiceName: 'snow8'
     #     sonarProjectKey: 'algimas'
     #     sonarInstanceUrl: '$(sonarUrl)'
+
+
+  - job: 'ExtractJavaScript'
+  - job: 'PublishDevOpsConfig'
+  - job: 'AnalyzeESLint'
+  - job: 'PushGitHubPrettierCode'
+  - job: 'AnalyzeSonarQube'
