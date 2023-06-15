@@ -27,6 +27,7 @@ const rule = {
     },
 
     create: context => {
+        console.log(`START of is-valid-gliderecord-call.js`);
         grVars = ["current", "previous"];
         return {
             CallExpression: node => {
