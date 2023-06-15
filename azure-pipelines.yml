@@ -36,7 +36,7 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: stage
+- stage: dev
   jobs:
 
   - job: 'PreparationJob'
@@ -590,3 +590,11 @@ stages:
   - job: 'AnalyzeESLint'
   - job: 'PushGitHubPrettierCode'
   - job: 'AnalyzeSonarQube'
+
+- stage: test
+  jobs:
+  - job: 'Testing'
+
+- stage: prod
+  jobs:
+  - job: 'Deploying'
