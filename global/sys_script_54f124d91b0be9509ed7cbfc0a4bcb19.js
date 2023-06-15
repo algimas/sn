@@ -49,12 +49,12 @@
 
   var inc = new GlideRecord("incident");
   inc.addEncodedQuery(queryString);
-  if (inc.isValidEncodedQuery(queryString)) {
-    inc.query();
+  //if (inc.isValidEncodedQuery(queryString)){
+  inc.query();
 
-    while (inc.next()) {
-      inc.setValue("work_notes", "Some text");
-      inc.update();
-    }
+  while (inc.next()) {
+    inc.setValue("work_notes", "Some text");
+    inc.update();
   }
-})(current, previous); // 2023-06-15 19:26:51
+  //}
+})(current, previous); // 2023-06-15 19:26:51// 2023-06-15 19:29:21// 2023-06-15 19:33:35
