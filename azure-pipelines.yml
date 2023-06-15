@@ -291,6 +291,7 @@ stages:
     - script: |
         echo "module.exports = { rules: {" > /home/vsts/work/node_modules/eslint-plugin-algis/index.js
         echo "'is-valid-encoded-query': require('./lib/rules/is-valid-encoded-query')," >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
+        echo "'is-valid-gliderecord-call': require('./lib/rules/is-valid-gliderecord-call')," >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
         echo "'no-current-update': require('./lib/rules/no-current-update')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
       displayName: 'Create ESLint index.js'
 
