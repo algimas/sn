@@ -586,10 +586,19 @@ stages:
 
 
   - job: 'ExtractJavaScript'
+    dependsOn: 'PreparationJob'
+
   - job: 'PublishDevOpsConfig'
+    dependsOn: 'PreparationJob'
+
   - job: 'AnalyzeESLint'
+    dependsOn: 'PreparationJob'
+
   - job: 'PushGitHubPrettierCode'
+    dependsOn: 'PreparationJob'
+
   - job: 'AnalyzeSonarQube'
+    dependsOn: 'PreparationJob'
 
 - stage: test
   jobs:
