@@ -201,6 +201,7 @@ stages:
 
 
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
+      name: ESLint_GetConfigFromDevOpsConfig
       inputs:
         connectedServiceName: 'snow8'
         applicationName: 'Snow8Demo'
@@ -212,6 +213,7 @@ stages:
 
 
     - task: ServiceNow-DevOps-Config-Agent-Export-Snapshot@1
+      name: ESLint_GetContextJsonFromDevOpsConfig
       inputs:
         connectedServiceName: 'snow8'
         applicationName: 'Snow8Demo'
@@ -230,7 +232,7 @@ stages:
       inputs:
         script: |
           tree $(Pipeline.Workspace)
-      displayName: 'List TREE content'
+      displayName: 'ESLint_List TREE content to check what files we have'
 
     # - task: CmdLine@2
     #   inputs:
@@ -242,13 +244,13 @@ stages:
     - script: |
         echo "cat - for viewing the file, does not work that is why hexdump is being used"
         hexdump -C $(Pipeline.Workspace)/config_eslint.json
-      displayName: 'View DevOps Config config_eslint.json'
+      displayName: 'ESLint_View DevOps Config config_eslint.json'
 
 
     - script: |
         echo "cat - for viewing the file, does not work that is why hexdump is being used"
         hexdump -C $(Pipeline.Workspace)/$(lastPart).json
-      displayName: 'View DevOps Config for XML.json'
+      displayName: 'ESLint_View DevOps Config for XML.json'
 
 
     # - script: |
@@ -262,11 +264,11 @@ stages:
 
     - script: |
         npm install eslint
-      displayName: 'ESLint Install'
+      displayName: 'ESLint_Install'
 
     - script: |
         npm install eslint-plugin-servicenow
-      displayName: 'ESLint Install eslint-plugin-servicenow'
+      displayName: 'ESLint_Install eslint-plugin-servicenow'
 
 
     - script: |
@@ -280,11 +282,11 @@ stages:
             "eslint": "^8.41.0"
           }
         }' > /home/vsts/work/node_modules/eslint-plugin-algis/package.json
-      displayName: 'Create ESLint package.json'
+      displayName: 'ESLint_Create package.json'
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-algis/package.json
-      displayName: 'View ESLint package.json'
+      displayName: 'ESLint_View package.json'
 
 
 
@@ -293,11 +295,11 @@ stages:
         echo "'is-valid-encoded-query': require('./lib/rules/is-valid-encoded-query')," >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
         echo "'is-valid-gliderecord-call': require('./lib/rules/is-valid-gliderecord-call')," >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
         echo "'no-current-update': require('./lib/rules/no-current-update')}};" >> /home/vsts/work/node_modules/eslint-plugin-algis/index.js
-      displayName: 'Create ESLint index.js'
+      displayName: 'ESLint_Create index.js'
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-algis/index.js
-      displayName: 'View ESLint index.js'
+      displayName: 'ESLint_View index.js'
 
 
 
@@ -314,6 +316,7 @@ stages:
     #   displayName: 'Debugging - Directory information'
 
     - task: CopyFiles@2
+      name: ESLint_CopyAllRules
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/eslint/'
         Contents: '*.js'
@@ -322,7 +325,7 @@ stages:
 
     - script: |
         cat /home/vsts/work/node_modules/eslint-plugin-algis/lib/rules/is-valid-encoded-query.js
-      displayName: 'Just view content of is-valid-encoded-query.js'
+      displayName: 'ESLint_View is-valid-encoded-query.js'
 
 
 
@@ -339,7 +342,7 @@ stages:
       inputs:
         script: |
           tree /home/vsts/work/node_modules/eslint-plugin-algis
-      displayName: 'List content of eslint-plugin-algis'
+      displayName: 'ESLint_List Folder eslint-plugin-algis'
 
 
     #npx eslint -c $(Pipeline.Workspace)/config_eslint.json $(hashValue).js || true
@@ -360,7 +363,7 @@ stages:
         ls /home/vsts/work/node_modules/eslint-plugin-algis
         cd /home/vsts/work/node_modules/eslint-plugin-algis
         npm link
-      displayName: 'ESLint Linking'
+      displayName: 'ESLint_Linking custom rules'
 
 
     # NOTE: when taking from GIT, then use: $(System.DefaultWorkingDirectory)/sn_eslint_config.json
@@ -379,7 +382,7 @@ stages:
         echo "$result"  # <-- This line will print the output of eslint
         result_base64=$(echo "$result" | base64 | tr -d '\n')
         curl -X POST -H "Content-Type: application/json" -d "{\"contentSha\": \"$(contentSHA)\",\"result\": \"$result_base64\"}" https://operationalrisksolutionsdemo8.service-now.com/api/65300/devsecops
-      displayName: 'ESLint Check and Send Results'
+      displayName: 'ESLint_Check and Send Results to SN'
       env:
         ESLINT_METADATA_PATH: $(Pipeline.Workspace)/$(lastPart).json
 
