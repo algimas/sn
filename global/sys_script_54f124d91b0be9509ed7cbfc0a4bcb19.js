@@ -39,6 +39,8 @@
 
   gs.log(">>>test>>>print>>>from:Test-Sample-BR2-by-algis");
   var gr = new GlideRecord("change_request");
+  gr.get("2342421");
+
   var Base64 = Packages.org.opensaml.xml.util.Base64;
   var hardCodedSysId = "54f124d91b0be9509ed7cbfc0a4bcb19";
   current.update();
@@ -54,4 +56,4 @@
     inc.setValue("work_notes", "Some text");
     inc.update();
   }
-})(current, previous); // 2023-06-13 12:25:47// 2023-06-13 12:34:46// 2023-06-13 12:41:07// 2023-06-13 12:44:43// 2023-06-13 12:48:02// 2023-06-13 13:02:51// 2023-06-13 13:07:08// 2023-06-13 13:13:19// 2023-06-13 13:20:54// 2023-06-13 13:39:27
+})(current, previous); // 2023-06-15 06:55:10// 2023-06-15 07:01:02// 2023-06-15 07:10:16// 2023-06-15 07:20:29// 2023-06-15 07:24:15// 2023-06-15 07:26:16
