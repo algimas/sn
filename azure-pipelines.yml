@@ -36,7 +36,7 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: PreparationStage
+- stage: stage
   jobs:
 
   - job: 'PreparationJob'
