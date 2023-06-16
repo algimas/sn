@@ -17,4 +17,4 @@
   current.update();
   var gr = [];
   gs.info("test");
-})(current, previous); // 2023-06-16 11:45:21
+})(current, previous); // 2023-06-16 11:45:21// 2023-06-16 13:51:58
