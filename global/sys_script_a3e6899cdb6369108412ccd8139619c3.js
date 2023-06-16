@@ -2,7 +2,7 @@
   var queryString = "descriptionSTARTSWITHaaaaaaaaag";
   var inc = new GlideRecord("incident");
   inc.addEncodedQuery(queryString);
-  //var validQueryCheck = inc.isValidEncodedQuery(queryString);
+  var validQueryCheck = inc.isValidEncodedQuery(queryString);
   inc.query();
   while (inc.next()) {
     inc.setValue("work_notes", "Some text");
@@ -17,4 +17,4 @@
   current.update();
   var gr = [];
   gs.info("test");
-})(current, previous);
+})(current, previous); // 2023-06-16 11:45:21
